@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Engineer Lab — Praveen Kumar Thumati</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;600&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17;--surface:#111827;--surface2:#1a2332;--border:#1e293b;
+  --text:#e2e8f0;--text2:#94a3b8;--accent:#f59e0b;--accent2:#fbbf24;
+  --blue:#3b82f6;--green:#22c55e;--purple:#a78bfa;--red:#ef4444;
+  --cyan:#22d3ee;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(ellipse 600px 400px at 20% 50%, rgba(59,130,246,0.08) 0%, transparent 70%),
+  radial-gradient(ellipse 500px 300px at 80% 30%, rgba(245,158,11,0.06) 0%, transparent 70%);
+  pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:
+  linear-gradient(rgba(30,41,59,0.3) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(30,41,59,0.3) 1px, transparent 1px);
+  background-size:60px 60px;opacity:0.5}
+.hero-content{max-width:900px;margin:0 auto;padding:2rem;position:relative;z-index:1}
+.hero-label{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.8s 0.2s forwards}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2.5rem,6vw,4.5rem);line-height:1.1;margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.8s 0.4s forwards}
+.hero h1 span{color:var(--accent);display:inline-block}
+.hero-sub{font-size:1.15rem;color:var(--text2);max-width:600px;margin-bottom:2rem;opacity:0;animation:fadeUp 0.8s 0.6s forwards}
+.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;margin-bottom:2.5rem;opacity:0;animation:fadeUp 0.8s 0.8s forwards}
+.hero-meta div{font-family:'IBM Plex Mono',monospace;font-size:0.85rem}
+.hero-meta .val{color:var(--accent);font-weight:600;font-size:1.3rem;display:block}
+.hero-cta{display:inline-flex;align-items:center;gap:0.5rem;background:var(--accent);color:var(--bg);padding:0.85rem 2rem;font-weight:700;text-decoration:none;border-radius:6px;font-size:1rem;transition:all 0.3s;opacity:0;animation:fadeUp 0.8s 1s forwards}
+.hero-cta:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,158,11,0.3)}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,23,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0.8rem 2rem}
+nav .inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+nav .logo{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--accent);text-decoration:none}
+nav .links{display:flex;gap:1.5rem}
+nav .links a{color:var(--text2);text-decoration:none;font-size:0.9rem;font-weight:600;transition:color 0.3s}
+nav .links a:hover{color:var(--accent)}
+
+/* ── SECTIONS ── */
+section{max-width:1100px;margin:0 auto;padding:5rem 2rem}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:0.5rem}
+.section-title{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:1rem}
+.section-desc{color:var(--text2);max-width:650px;margin-bottom:3rem}
+
+/* ── ROADMAP TIMELINE ── */
+.phases{display:grid;gap:1.5rem}
+.phase{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.8rem 2rem;display:grid;grid-template-columns:auto 1fr auto;gap:1.5rem;align-items:center;transition:all 0.3s;position:relative;overflow:hidden}
+.phase::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.phase:nth-child(1)::before,.phase:nth-child(2)::before{background:var(--blue)}
+.phase:nth-child(3)::before,.phase:nth-child(4)::before{background:var(--green)}
+.phase:nth-child(5)::before,.phase:nth-child(6)::before{background:var(--accent)}
+.phase:nth-child(7)::before,.phase:nth-child(8)::before{background:var(--purple)}
+.phase:hover{border-color:var(--accent);transform:translateX(4px)}
+.phase-num{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--text2);background:var(--surface2);padding:0.4rem 0.8rem;border-radius:6px;white-space:nowrap}
+.phase-info h3{font-size:1.15rem;font-weight:700;margin-bottom:0.3rem}
+.phase-info p{font-size:0.9rem;color:var(--text2)}
+.phase-weeks{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--accent);text-align:right}
+.phase-status{font-size:0.7rem;display:block;margin-top:0.3rem;color:var(--text2)}
+
+/* ── WEEK CARDS ── */
+.week-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem}
+.week-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;transition:all 0.3s;position:relative;text-decoration:none;color:var(--text);display:block}
+.week-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.week-card.active{border-color:var(--green)}
+.week-card.active::after{content:'LIVE';position:absolute;top:1rem;right:1rem;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;background:var(--green);color:var(--bg);padding:0.2rem 0.6rem;border-radius:4px;font-weight:600;letter-spacing:1px}
+.week-card.locked{opacity:0.5;pointer-events:none}
+.week-num{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:2px;margin-bottom:0.5rem}
+.week-card h3{font-size:1.05rem;margin-bottom:0.4rem}
+.week-card p{font-size:0.85rem;color:var(--text2);line-height:1.5}
+.week-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.8rem}
+.week-tags span{font-size:0.7rem;padding:0.2rem 0.6rem;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.tag-generic{background:rgba(59,130,246,0.15);color:var(--blue)}
+.tag-ms{background:rgba(245,158,11,0.15);color:var(--accent)}
+.tag-hands-on{background:rgba(34,197,94,0.15);color:var(--green)}
+
+/* ── GPU SECTION ── */
+.gpu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem}
+.gpu-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;transition:all 0.3s}
+.gpu-card:hover{border-color:var(--cyan)}
+.gpu-card h3{font-size:1.1rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem}
+.gpu-card .badge{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:3px;font-weight:600}
+.badge-free{background:rgba(34,197,94,0.2);color:var(--green)}
+.badge-best{background:rgba(245,158,11,0.2);color:var(--accent)}
+.badge-paid{background:rgba(239,68,68,0.15);color:var(--red)}
+.gpu-card p{font-size:0.88rem;color:var(--text2);margin-bottom:0.6rem}
+.gpu-card .specs{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--cyan)}
+
+/* ── PROCESS ── */
+.process-steps{display:grid;gap:1rem;counter-reset:step}
+.step{display:grid;grid-template-columns:50px 1fr;gap:1rem;align-items:start;padding:1.2rem 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-num{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--accent);line-height:1}
+.step h3{font-size:1.05rem;margin-bottom:0.3rem}
+.step p{font-size:0.9rem;color:var(--text2)}
+.step code{font-family:'IBM Plex Mono',monospace;font-size:0.82rem;background:var(--surface2);padding:0.15rem 0.5rem;border-radius:4px;color:var(--cyan)}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:3rem 2rem;text-align:center}
+footer p{color:var(--text2);font-size:0.85rem}
+footer a{color:var(--accent);text-decoration:none}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .phase{grid-template-columns:1fr;gap:0.8rem}
+  .phase-weeks{text-align:left}
+  .hero-meta{gap:1rem}
+  nav .links{gap:0.8rem}
+  nav .links a{font-size:0.8rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a href="#" class="logo">AI Lab</a>
+    <div class="links">
+      <a href="#roadmap">Roadmap</a>
+      <a href="#weeks">Weeks</a>
+      <a href="#gpu">Free GPUs</a>
+      <a href="#process">Process</a>
+      <a href="https://praveent27.github.io" target="_blank">Portfolio ↗</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-label">Open-Source Learning Journey</div>
+    <h1>Data Engineer → <span>AI Engineer</span></h1>
+    <p class="hero-sub">A 28-week hands-on roadmap from ML fundamentals to Azure AI-102 certification. Every notebook, cheat sheet, and project — documented in the open.</p>
+    <div class="hero-meta">
+      <div><span class="val">28</span> Weeks</div>
+      <div><span class="val">8</span> Phases</div>
+      <div><span class="val">AI-102</span> Certification</div>
+      <div><span class="val">100%</span> Free Resources</div>
+    </div>
+    <a href="#weeks" class="hero-cta">Start Week 1 →</a>
+  </div>
+</section>
+
+<!-- ═══ ROADMAP ═══ -->
+<section id="roadmap">
+  <div class="section-label">The Plan</div>
+  <h2 class="section-title">8-Phase Roadmap</h2>
+  <p class="section-desc">Built for working professionals — 1.5h weekdays, 3-4h weekends. Fridays off. Each phase ends with a milestone project and checkpoint.</p>
+
+  <div class="phases">
+    <div class="phase">
+      <span class="phase-num">PHASE 1</span>
+      <div class="phase-info">
+        <h3>AI & ML Foundations</h3>
+        <p>Python for ML, NumPy, Pandas, linear algebra, statistics. Build the mathematical intuition before touching any ML library.</p>
+      </div>
+      <div class="phase-weeks">Weeks 1–4<span class="phase-status">▶ In Progress</span></div>
+    </div>
+    <div class="phase">
+      <span class="phase-num">PHASE 2</span>
+      <div class="phase-info">
+        <h3>Classical ML & Data Science</h3>
+        <p>Scikit-learn, decision trees, random forests, XGBoost, clustering, hyperparameter tuning, ML engineering practices.</p>
+      </div>
+      <div class="phase-weeks">Weeks 5–8<span class="phase-status">○ Upcoming</span></div>
+    </div>
+    <div class="phase">
+      <span class="phase-num">PHASE 3</span>
+      <div class="phase-info">
+        <h3>Deep Learning Essentials</h3>
+        <p>Neural networks from scratch, PyTorch, CNNs, RNNs, Transformers, attention mechanism. The architectures behind modern AI.</p>
+      </div>
+      <div class="phase-weeks">Weeks 9–12<span class="phase-status">○ Upcoming</span></div>
+    </div>
+    <div class="phase">
+      <span class="phase-num">PHASE 4</span>
+      <div class="phase-info">
+        <h3>NLP & Language Models</h3>
+        <p>Text processing, embeddings, LLMs, prompt engineering, RAG architecture, vector search. The core of Azure AI Services.</p>
+      </div>
+      <div class="phase-weeks">Weeks 13–16<span class="phase-status">○ Upcoming</span></div>
+    </div>
+    <div class="phase">
+      <span class="phase-num">PHASE 5</span>
+      <div class="phase-info">
+        <h3>Computer Vision & Speech</h3>
+        <p>Azure AI Vision, Custom Vision, Document Intelligence, Speech services, Azure AI Language.</p>
+      </div>
+      <div class="phase-weeks">Weeks 17–19<span class="phase-status">○ Upcoming</span></div>
+    </div>
+    <div class="phase">
+      <span class="phase-num">PHASE 6</span>
+      <div class="phase-info">
+        <h3>Azure AI Services Deep Dive</h3>
+        <p>Azure OpenAI, AI Search, Bot Framework, content filtering. AI-102 exam domains covered in depth.</p>
+      </div>
+      <div class="phase-weeks">Weeks 20–23<span class="phase-status">○ Upcoming</span></div>
+    </div>
+    <div class="phase">
+      <span class="phase-num">PHASE 7</span>
+      <div class="phase-info">
+        <h3>Responsible AI & MLOps</h3>
+        <p>Fairness, interpretability, content safety, model monitoring, CI/CD for AI, Bicep for AI infrastructure.</p>
+      </div>
+      <div class="phase-weeks">Weeks 24–25<span class="phase-status">○ Upcoming</span></div>
+    </div>
+    <div class="phase">
+      <span class="phase-num">PHASE 8</span>
+      <div class="phase-info">
+        <h3>Capstone & Certification</h3>
+        <p>End-to-end AI solution on Azure. AI-102 intensive prep, practice exams, and exam day.</p>
+      </div>
+      <div class="phase-weeks">Weeks 26–28<span class="phase-status">○ Upcoming</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WEEK CARDS ═══ -->
+<section id="weeks">
+  <div class="section-label">Study Notes</div>
+  <h2 class="section-title">Week-by-Week Content</h2>
+  <p class="section-desc">Each week includes detailed notes, Jupyter notebooks, cheat sheets, and a summary of key concepts. Click a week to dive in.</p>
+
+  <div class="week-grid">
+    <a href="weeks/week-01/index.html" class="week-card active">
+      <div class="week-num">WEEK 01</div>
+      <h3>Python for ML & Math Refresh</h3>
+      <p>NumPy, Pandas, Matplotlib, Seaborn, linear algebra, statistics, EDA project on Titanic dataset.</p>
+      <div class="week-tags">
+        <span class="tag-generic">Generic AI</span>
+        <span class="tag-hands-on">6 Notebooks</span>
+      </div>
+    </a>
+    <div class="week-card locked">
+      <div class="week-num">WEEK 02</div>
+      <h3>Core ML Concepts</h3>
+      <p>Supervised vs unsupervised, bias-variance, evaluation metrics, linear & logistic regression from scratch.</p>
+      <div class="week-tags"><span class="tag-generic">Generic AI</span></div>
+    </div>
+    <div class="week-card locked">
+      <div class="week-num">WEEK 03</div>
+      <h3>Feature Engineering & Data Prep</h3>
+      <p>Missing data, encoding, scaling, selection, PCA, end-to-end preprocessing pipeline.</p>
+      <div class="week-tags"><span class="tag-generic">Generic AI</span></div>
+    </div>
+    <div class="week-card locked">
+      <div class="week-num">WEEK 04</div>
+      <h3>Phase 1 Capstone</h3>
+      <p>Scikit-learn pipelines, house price prediction project, model evaluation deep-dive.</p>
+      <div class="week-tags"><span class="tag-generic">Generic AI</span><span class="tag-hands-on">Project</span></div>
+    </div>
+    <div class="week-card locked"><div class="week-num">WEEK 05</div><h3>Classical ML Algorithms — Part 1</h3><p>Decision trees, random forests, XGBoost, SVMs, KNN.</p><div class="week-tags"><span class="tag-generic">Generic AI</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 06</div><h3>Unsupervised Learning</h3><p>K-Means, DBSCAN, anomaly detection, hyperparameter tuning.</p><div class="week-tags"><span class="tag-generic">Generic AI</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 07</div><h3>ML Engineering Practices</h3><p>MLflow, model serving, reproducible projects.</p><div class="week-tags"><span class="tag-generic">Generic AI</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 08</div><h3>Phase 2 Capstone</h3><p>End-to-end ML pipeline, Kaggle competition.</p><div class="week-tags"><span class="tag-generic">Generic AI</span><span class="tag-hands-on">Project</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 09</div><h3>Neural Network Foundations</h3><p>Perceptrons, backpropagation, PyTorch, MNIST.</p><div class="week-tags"><span class="tag-generic">Generic AI</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 10</div><h3>CNNs & Transfer Learning</h3><p>Convolutions, CIFAR-10, ResNet, YOLO.</p><div class="week-tags"><span class="tag-generic">Generic AI</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 11</div><h3>Transformers & Attention</h3><p>RNNs, attention, transformer architecture, GPT vs BERT.</p><div class="week-tags"><span class="tag-generic">Generic AI</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 12</div><h3>Phase 3 Capstone</h3><p>Hugging Face, fine-tuning BERT, image classification app.</p><div class="week-tags"><span class="tag-generic">Generic AI</span><span class="tag-hands-on">Project</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 13</div><h3>NLP Fundamentals</h3><p>Tokenisation, TF-IDF, NER, topic modelling.</p><div class="week-tags"><span class="tag-generic">Generic AI</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 14</div><h3>LLMs & Prompt Engineering</h3><p>Prompt patterns, function calling, agents.</p><div class="week-tags"><span class="tag-generic">Generic AI</span><span class="tag-ms">Azure OpenAI</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 15</div><h3>Embeddings & RAG</h3><p>Vector search, chunking, retrieval pipelines.</p><div class="week-tags"><span class="tag-generic">Generic AI</span><span class="tag-ms">AI Search</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 16</div><h3>Phase 4 Capstone</h3><p>RAG knowledge base, LangChain, Azure OpenAI.</p><div class="week-tags"><span class="tag-ms">Microsoft</span><span class="tag-hands-on">Project</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 17</div><h3>Azure AI Vision</h3><p>Image analysis, Custom Vision, Document Intelligence.</p><div class="week-tags"><span class="tag-ms">AI-102</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 18</div><h3>Speech & Language Services</h3><p>Speech-to-text, CLU, Translator, sentiment.</p><div class="week-tags"><span class="tag-ms">AI-102</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 19</div><h3>Phase 5 Consolidation</h3><p>Multi-service solutions, security, containers.</p><div class="week-tags"><span class="tag-ms">AI-102</span><span class="tag-hands-on">Project</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 20</div><h3>Azure OpenAI Deep Dive</h3><p>Content filtering, On Your Data, DALL-E.</p><div class="week-tags"><span class="tag-ms">AI-102</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 21</div><h3>Azure AI Search</h3><p>Skillsets, knowledge store, vector search.</p><div class="week-tags"><span class="tag-ms">AI-102</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 22</div><h3>Bot Framework</h3><p>Conversational AI, Q&A, Teams integration.</p><div class="week-tags"><span class="tag-ms">AI-102</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 23</div><h3>Phase 6 Capstone</h3><p>Enterprise AI solution, all services combined.</p><div class="week-tags"><span class="tag-ms">AI-102</span><span class="tag-hands-on">Project</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 24</div><h3>Responsible AI</h3><p>Fairlearn, SHAP, content safety, red teaming.</p><div class="week-tags"><span class="tag-ms">AI-102</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 25</div><h3>MLOps & Production AI</h3><p>Model monitoring, Bicep for AI, architecture.</p><div class="week-tags"><span class="tag-ms">AI-102</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 26</div><h3>Capstone Build</h3><p>End-to-end Azure AI solution.</p><div class="week-tags"><span class="tag-ms">Microsoft</span><span class="tag-hands-on">Capstone</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 27</div><h3>AI-102 Exam Prep</h3><p>Practice exams, targeted study, flashcards.</p><div class="week-tags"><span class="tag-ms">AI-102 Exam</span></div></div>
+    <div class="week-card locked"><div class="week-num">WEEK 28</div><h3>Exam & Graduation</h3><p>Final prep, sit exam, portfolio update.</p><div class="week-tags"><span class="tag-ms">AI-102 Exam</span><span class="tag-hands-on">🎓</span></div></div>
+  </div>
+</section>
+
+<!-- ═══ FREE GPU ═══ -->
+<section id="gpu">
+  <div class="section-label">No GPU? No Problem</div>
+  <h2 class="section-title">Where to Run Notebooks for Free</h2>
+  <p class="section-desc">You don't need a GPU laptop for weeks 1–8. For deep learning (weeks 9+), these platforms give you free GPU access.</p>
+
+  <div class="gpu-grid">
+    <div class="gpu-card">
+      <h3>Google Colab <span class="badge badge-best">★ Recommended</span></h3>
+      <p>Zero setup, runs in browser, free T4 GPU. Best for quick experiments and weeks 1–12 content. Mount Google Drive for persistent storage.</p>
+      <p class="specs">GPU: T4 (15GB) · RAM: 12GB · Session: ~12h · Free</p>
+    </div>
+    <div class="gpu-card">
+      <h3>Kaggle Notebooks <span class="badge badge-free">FREE</span></h3>
+      <p>30h/week GPU quota, P100 GPU, built-in datasets. Great for competitions and the EDA projects. Background execution supported.</p>
+      <p class="specs">GPU: P100 (16GB) · RAM: 30GB · Quota: 30h/wk · Free</p>
+    </div>
+    <div class="gpu-card">
+      <h3>AWS SageMaker Studio Lab <span class="badge badge-free">FREE</span></h3>
+      <p>Persistent storage (no re-upload), JupyterLab interface, good GitHub integration. 4h GPU sessions. No credit card needed.</p>
+      <p class="specs">GPU: T4 · RAM: 16GB · Session: 4h · Free (signup)</p>
+    </div>
+    <div class="gpu-card">
+      <h3>Lightning.ai <span class="badge badge-best">★ Best for DL</span></h3>
+      <p>Best UX for serious deep learning work. Persistent home drive, team collab, PyTorch Lightning native. Free tier with GPU credits.</p>
+      <p class="specs">GPU: Various · Persistent · Free tier + paid</p>
+    </div>
+    <div class="gpu-card">
+      <h3>Paperspace Gradient <span class="badge badge-free">FREE</span></h3>
+      <p>Free GPU notebooks (M4000, RTX4000), persistent storage, no session timeouts. Now part of DigitalOcean.</p>
+      <p class="specs">GPU: M4000/RTX4000 · Persistent · Free tier</p>
+    </div>
+    <div class="gpu-card">
+      <h3>Azure ML Free Tier <span class="badge badge-free">FREE</span></h3>
+      <p>Azure Machine Learning offers a free tier with limited compute. Best for weeks 17+ when you need Azure AI Services anyway. Spin up notebooks directly in the Azure portal.</p>
+      <p class="specs">GPU: Configurable · Best for Azure AI labs</p>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-top:2rem">
+    <h3 style="color:var(--accent);font-size:1rem;margin-bottom:0.5rem">💡 My Recommendation</h3>
+    <p style="color:var(--text2);font-size:0.92rem"><strong style="color:var(--text)">Weeks 1–8:</strong> Google Colab (CPU is fine — no GPU needed for NumPy, Pandas, scikit-learn). <strong style="color:var(--text)">Weeks 9–16:</strong> Google Colab with T4 GPU for PyTorch and deep learning. <strong style="color:var(--text)">Weeks 17–28:</strong> Azure free tier for AI Services labs + Colab for any model training.</p>
+  </div>
+</section>
+
+<!-- ═══ PROCESS ═══ -->
+<section id="process">
+  <div class="section-label">How to Use This Resource</div>
+  <h2 class="section-title">The Study Process</h2>
+  <p class="section-desc">A systematic workflow for each week. Consistency beats intensity — 1.5 hours of focused practice beats 4 hours of passive reading.</p>
+
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>Read the Week Summary First</h3>
+        <p>Each week page starts with a summary of what you'll learn and why it matters. Read this before touching any code. Understand the "why" before the "how".</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>Open the Notebook in Colab</h3>
+        <p>Click the "Open in Colab" badge on each notebook. Or clone the repo: <code>git clone https://github.com/praveent27/ai-engineer-lab.git</code> and run locally with <code>jupyter lab</code>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>Run Every Cell — Don't Just Read</h3>
+        <p>Execute each cell, read the output, then <strong>modify it</strong>. Change parameters, break things, add print statements. Active experimentation beats passive reading 10x.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <h3>Complete the Exercises Without Looking</h3>
+        <p>Every notebook has exercises at the end. Try them before checking the solutions. If you get stuck for more than 10 minutes, peek at the solution, then close it and try again.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div>
+        <h3>Review the Cheat Sheet</h3>
+        <p>Each week has a syntax quick-reference. Print it or keep it open in a second tab. Use it during exercises, then try to recall from memory.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div>
+        <h3>Push Your Work to GitHub</h3>
+        <p>After finishing each day's notebook, commit to your fork. This builds your portfolio and creates a habit of documentation. Your completed notebooks ARE your proof of learning.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div>
+        <h3>Friday = Rest. Sunday = Build.</h3>
+        <p>Fridays are off. Saturdays are deep-dive theory days. Sundays are project days — apply everything from the week on a real dataset or mini-project.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REPO SETUP ═══ -->
+<section id="repo">
+  <div class="section-label">Getting Started</div>
+  <h2 class="section-title">Repository Setup</h2>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:1.5rem">
+    <h3 style="color:var(--accent);margin-bottom:1rem">Recommended Structure</h3>
+    <pre style="font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--cyan);line-height:1.8;overflow-x:auto">
+praveent27/ai-engineer-lab          ← New repo (separate from portfolio)
+├── index.html                      ← This landing page
+├── weeks/
+│   ├── week-01/
+│   │   ├── index.html              ← Week 1 notes page
+│   │   └── notebooks/
+│   │       ├── Day1_NumPy.ipynb
+│   │       ├── Day2_Pandas.ipynb
+│   │       └── ...
+│   ├── week-02/
+│   │   └── ...
+│   └── ...
+├── notebooks/                      ← All notebooks flat (for Colab links)
+├── cheatsheets/                    ← Printable quick references
+└── README.md                       ← Repo overview + journey log</pre>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem">
+    <h3 style="color:var(--accent);margin-bottom:1rem">Quick Start Commands</h3>
+    <pre style="font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--cyan);line-height:2;overflow-x:auto">
+# 1. Create the repo on GitHub: praveent27/ai-engineer-lab
+# 2. Enable GitHub Pages: Settings → Pages → Source: main, / (root)
+
+# 3. Clone and set up locally
+git clone https://github.com/praveent27/ai-engineer-lab.git
+cd ai-engineer-lab
+
+# 4. Copy these files into the repo
+# 5. Push to main
+git add .
+git commit -m "feat: launch AI Engineer Lab — Week 1"
+git push origin main
+
+# Your site will be live at: https://praveent27.github.io/ai-engineer-lab/</pre>
+  </div>
+</section>
+
+<footer>
+  <p>Built by <a href="https://praveent27.github.io" target="_blank">Praveen Kumar Thumati</a> · Data Engineer → AI Engineer</p>
+  <p style="margin-top:0.5rem;font-size:0.75rem;color:var(--text2)">Open source. Fork it, learn from it, build your own path.</p>
+</footer>
+
+</body>
+</html>
