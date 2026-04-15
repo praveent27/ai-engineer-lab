@@ -739,11 +739,11 @@ function updateScore(){
   document.getElementById('score-display').textContent = opened;
 }
 function copyNotebookPath(notebookName) {
-  const path = `weeks/week-02/${notebookName}`;
-  navigator.clipboard.writeText(path).then(() => {
+  const fullUrl = `https://github.com/praveent27/ai-engineer-lab/blob/main/weeks/week-02/${notebookName}`;
+  navigator.clipboard.writeText(fullUrl).then(() => {
     // Show temporary feedback
     const notification = document.createElement('div');
-    notification.textContent = `Copied: ${path}`;
+    notification.textContent = `Copied: ${fullUrl}`;
     notification.style.cssText = `
       position: fixed;
       top: 20px;
