@@ -193,7 +193,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="day-content">
     <p><strong>Why this matters:</strong> NumPy is the bedrock of every ML library in Python. PyTorch tensors, scikit-learn matrices, Pandas DataFrames — they're all NumPy arrays underneath. If you understand NumPy, you understand the data structures of ML.</p>
 
-    <a href="#" class="notebook-link">📓 Day1_NumPy_Fundamentals.ipynb</a>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day1_NumPy_Fundamentals.ipynb')">📓 Day1_NumPy_Fundamentals.ipynb</a>
 
     <div class="concepts">
       <div class="concept">
@@ -238,7 +238,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="day-content">
     <p><strong>Why this matters:</strong> Pandas is how you load, clean, transform, and explore real data before feeding it to any ML model. Every Kaggle kernel starts with Pandas. Every data pipeline ends with a Pandas-like operation.</p>
 
-    <a href="#" class="notebook-link">📓 Day2_Pandas_DeepDive.ipynb</a>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day2_Pandas_DeepDive.ipynb')">📓 Day2_Pandas_DeepDive.ipynb</a>
 
     <div class="concepts">
       <div class="concept">
@@ -293,7 +293,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="day-content">
     <p><strong>Why this matters:</strong> Visualisation is how you debug data AND models. Confusion matrices, loss curves, feature importance plots, and correlation heatmaps are your daily tools as an ML practitioner.</p>
 
-    <a href="#" class="notebook-link">📓 Day3_Matplotlib_Seaborn.ipynb</a>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day3_Matplotlib_Seaborn.ipynb')">📓 Day3_Matplotlib_Seaborn.ipynb</a>
 
     <div class="concepts">
       <div class="concept">
@@ -333,7 +333,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="day-content">
     <p><strong>Why this matters:</strong> Neural network layers are matrix multiplications. Embeddings are vectors. PCA is eigenvalue decomposition. Cosine similarity powers Azure AI Search. Understanding these operations makes every ML concept click.</p>
 
-    <a href="#" class="notebook-link">📓 Day4_Linear_Algebra_for_ML.ipynb</a>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day4_Linear_Algebra_for_ML.ipynb')">📓 Day4_Linear_Algebra_for_ML.ipynb</a>
 
     <div class="concepts">
       <div class="concept">
@@ -394,7 +394,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="day-content">
     <p><strong>Why this matters:</strong> Distributions underpin model assumptions. Bayes theorem is the foundation of probabilistic ML. Hypothesis testing is how you compare models. Entropy drives decision tree splits. Statistics is the "why" behind every ML algorithm.</p>
 
-    <a href="#" class="notebook-link">📓 Day6_Statistics_for_ML.ipynb</a>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day6_Statistics_for_ML.ipynb')">📓 Day6_Statistics_for_ML.ipynb</a>
 
     <div class="concepts">
       <div class="concept">
@@ -438,7 +438,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="day-content">
     <p><strong>Why this matters:</strong> This is where everything comes together. A complete Exploratory Data Analysis following a repeatable template you'll use before building ANY model, on ANY dataset, for the rest of your career.</p>
 
-    <a href="#" class="notebook-link">📓 Day7_EDA_MiniProject_Titanic.ipynb</a>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day7_EDA_MiniProject_Titanic.ipynb')">📓 Day7_EDA_MiniProject_Titanic.ipynb</a>
 
     <div class="concepts">
       <div class="concept">
@@ -521,7 +521,7 @@ footer a{color:var(--accent);text-decoration:none}
       <tr><td>Eigenvalues</td><td>np.linalg.eig(A)</td><td>PCA dimensionality reduction</td></tr>
     </table>
 
-    <a href="#" class="notebook-link" style="margin-top:1rem">📓 Week1_Syntax_QuickReference.ipynb</a>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Week1_Syntax_QuickReference.ipynb')" style="margin-top:1rem">📓 Week1_Syntax_QuickReference.ipynb</a>
   </div>
 </div>
 
@@ -728,7 +728,44 @@ function updateScore(){
   const opened = document.querySelectorAll('.flashcard.open').length;
   document.getElementById('score-display').textContent = opened;
 }
+function copyNotebookPath(notebookName) {
+  const path = `weeks/week-01/${notebookName}`;
+  navigator.clipboard.writeText(path).then(() => {
+    // Show temporary feedback
+    const notification = document.createElement('div');
+    notification.textContent = `Copied: ${path}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--green);
+      color: var(--bg);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease-in forwards';
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
+  });
+}
 </script>
+
+<style>
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+</style>
 
 <!-- ═══ NEXT WEEK PREVIEW ═══ -->
 <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-top:3rem;text-align:center">
