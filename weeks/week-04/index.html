@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 4 — Phase 1 Capstone | AI Engineer Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;600&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17;--surface:#111827;--surface2:#1a2332;--border:#1e293b;
+  --text:#e2e8f0;--text2:#94a3b8;--accent:#f59e0b;--accent2:#fbbf24;
+  --blue:#3b82f6;--green:#22c55e;--purple:#a78bfa;--red:#ef4444;
+  --cyan:#22d3ee;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,23,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0.8rem 2rem}
+nav .inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+nav .logo{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--accent);text-decoration:none}
+nav .back{color:var(--text2);text-decoration:none;font-size:0.85rem;transition:color 0.3s}
+nav .back:hover{color:var(--accent)}
+
+.container{max-width:900px;margin:0 auto;padding:2rem}
+
+/* ── HEADER ── */
+.week-header{padding:3rem 0;border-bottom:1px solid var(--border);margin-bottom:3rem}
+.week-label{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:0.5rem}
+.week-header h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3rem);margin-bottom:1rem}
+.week-header .desc{color:var(--text2);font-size:1.05rem;max-width:700px;margin-bottom:1.5rem}
+.meta-row{display:flex;gap:1.5rem;flex-wrap:wrap}
+.meta-item{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--text2);background:var(--surface);padding:0.4rem 0.8rem;border-radius:5px;border:1px solid var(--border)}
+.meta-item span{color:var(--accent)}
+
+/* ── TOC ── */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem 2rem;margin-bottom:3rem}
+.toc h3{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace;letter-spacing:1px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.4rem}
+.toc a{color:var(--text2);text-decoration:none;font-size:0.88rem;padding:0.3rem 0;display:flex;align-items:center;gap:0.5rem;transition:color 0.3s}
+.toc a:hover{color:var(--accent)}
+.toc a .day-tag{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--cyan);min-width:35px}
+
+/* ── DAY SECTIONS ── */
+.day-section{margin-bottom:4rem;scroll-margin-top:80px}
+.day-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.8rem;border-bottom:2px solid var(--border)}
+.day-badge{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--bg);background:var(--accent);padding:0.3rem 0.7rem;border-radius:4px;font-weight:600;white-space:nowrap}
+.day-badge.rest{background:var(--text2)}
+.day-header h2{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.day-header .time{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--text2);margin-left:auto}
+
+day-content p{margin-bottom:1rem;color:var(--text2)}
+.day-content strong{color:var(--text)}
+
+/* ── CONCEPT CARDS ── */
+.concepts{display:grid;gap:0.8rem;margin:1.5rem 0}
+.concept{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;transition:border-color 0.3s}
+.concept:hover{border-color:var(--blue)}
+.concept h4{font-size:0.95rem;color:var(--blue);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.5rem}
+.concept p{font-size:0.88rem;color:var(--text2);margin:0}
+.concept code{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--surface2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--cyan)}
+
+/* ── CODE BLOCKS ── */
+pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;overflow-x:auto;margin:1rem 0;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;line-height:1.7;color:var(--cyan)}
+
+/* ── KEY TAKEAWAYS ── */
+.takeaways{background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(59,130,246,0.08));border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:1.5rem 2rem;margin:1.5rem 0}
+.takeaways h3{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace}
+.takeaways ul{list-style:none;padding:0}
+.takeaways li{padding:0.3rem 0;font-size:0.9rem;color:var(--text);padding-left:1.5rem;position:relative}
+.takeaways li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+
+/* ── CHEAT SHEET ── */
+.cheatsheet{margin:2rem 0}
+.cheatsheet h3{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:1rem;color:var(--accent)}
+.cheat-table{width:100%;border-collapse:collapse;font-size:0.85rem}
+.cheat-table th{text-align:left;padding:0.6rem 1rem;background:var(--surface2);color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:0.75rem;letter-spacing:1px;border-bottom:2px solid var(--border)}
+.cheat-table td{padding:0.5rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.cheat-table td:first-child{color:var(--text);font-weight:600;white-space:nowrap}
+.cheat-table td:nth-child(2){font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--cyan)}
+.cheat-table td:last-child{color:var(--text2)}
+.cheat-table tr:hover{background:rgba(59,130,246,0.05)}
+
+/* ── NOTEBOOK LINKS ── */
+.notebook-link{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);padding:0.5rem 1rem;border-radius:6px;text-decoration:none;color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;transition:all 0.3s;margin:0.3rem 0.3rem 0.3rem 0}
+.notebook-link:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+/* ── ML MAPPING ── */
+.ml-map{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1.5rem 0}
+.ml-map h4{font-size:0.85rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace}
+.ml-map-item{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;padding:0.4rem 0;font-size:0.85rem}
+.ml-map-item .arrow{color:var(--accent)}
+.ml-map-item .left{color:var(--text2);text-align:right}
+.ml-map-item .right{color:var(--cyan)}
+
+/* ── SUMMARY BOX ── */
+.summary-box{background:var(--surface2);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:1.5rem;margin:2rem 0}
+.summary-box h3{font-size:1rem;color:var(--green);margin-bottom:0.5rem}
+.summary-box p{font-size:0.9rem;color:var(--text2)}
+
+/* ── FLASHCARDS ── */
+.flashcard-section{margin:4rem 0;scroll-margin-top:80px}
+.flashcard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.flashcard-header h3{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.flashcard-score{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--text2);background:var(--surface);padding:0.5rem 1rem;border-radius:6px;border:1px solid var(--border)}
+.flashcard-score span{color:var(--green);font-weight:600}
+.flashcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:1rem}
+@media(max-width:500px){.flashcard-grid{grid-template-columns:1fr}}
+.flashcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.3s}
+.flashcard:hover{border-color:rgba(245,158,11,0.4)}
+.flashcard-q{padding:1.2rem 1.5rem;cursor:pointer;display:flex;align-items:flex-start;gap:0.8rem;user-select:none;-webkit-user-select:none}
+.flashcard-q:hover{background:rgba(245,158,11,0.03)}
+.flashcard-num{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--accent);background:rgba(245,158,11,0.1);padding:0.25rem 0.5rem;border-radius:4px;white-space:nowrap;min-width:28px;text-align:center;margin-top:2px}
+.flashcard-text{font-size:0.92rem;color:var(--text);line-height:1.5;flex:1}
+.flashcard-toggle{color:var(--text2);font-size:0.8rem;margin-top:2px;transition:transform 0.3s;flex-shrink:0}
+.flashcard.open .flashcard-toggle{transform:rotate(180deg)}
+.flashcard-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s ease}
+.flashcard.open .flashcard-a{max-height:500px}
+.flashcard-a-inner{padding:0 1.5rem 1.2rem 3.5rem;font-size:0.88rem;color:var(--text2);line-height:1.6;border-top:1px dashed var(--border)}
+.flashcard-a-inner{padding-top:1rem}
+.flashcard-a-inner code{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--surface2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--cyan)}
+.flashcard-a-inner strong{color:var(--text)}
+.flashcard-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;padding:0.15rem 0.45rem;border-radius:3px;margin-right:0.3rem}
+.tag-numpy{background:rgba(59,130,246,0.15);color:var(--blue)}
+.tag-pandas{background:rgba(34,197,94,0.15);color:var(--green)}
+.tag-viz{background:rgba(167,139,250,0.15);color:var(--purple)}
+.tag-linalg{background:rgba(245,158,11,0.15);color:var(--accent)}
+.tag-stats{background:rgba(34,211,238,0.15);color:var(--cyan)}
+.tag-eda{background:rgba(239,68,68,0.15);color:var(--red)}
+.tag-planning{background:rgba(59,130,246,0.12);color:var(--blue)}
+.tag-preprocess{background:rgba(34,197,94,0.12);color:var(--green)}
+.tag-modeling{background:rgba(167,139,250,0.12);color:var(--purple)}
+.tag-evaluation{background:rgba(245,158,11,0.12);color:var(--accent)}
+.tag-deployment{background:rgba(22,163,74,0.12);color:var(--green)}
+.tag-capstone{background:rgba(59,130,246,0.12);color:var(--cyan)}
+
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;margin-top:4rem}
+footer p{color:var(--text2);font-size:0.8rem}
+footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:768px){
+  .day-header{flex-wrap:wrap}
+  .day-header .time{margin-left:0;width:100%}
+  .meta-row{gap:0.5rem}
+  .ml-map-item{grid-template-columns:1fr;gap:0.2rem}
+  .ml-map-item .left{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a href="../../index.html" class="logo">AI Lab</a>
+    <a href="../../index.html#weeks" class="back">← Back to All Weeks</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══ HEADER ═══ -->
+<div class="week-header">
+  <div class="week-label">PHASE 1 · WEEK 04</div>
+  <h1>Phase 1 Capstone</h1>
+  <p class="desc">The bridge week. Combine data engineering, feature prep, model training, evaluation, and deployment-ready pipelines into one end-to-end capstone workflow.</p>
+  <div class="meta-row">
+    <div class="meta-item"><span>6</span> Study Days</div>
+    <div class="meta-item"><span>~14h</span> Total</div>
+    <div class="meta-item"><span>7</span> Notebooks</div>
+    <div class="meta-item"><span>1</span> Project</div>
+    <div class="meta-item">Type: <span>Generic AI</span></div>
+  </div>
+</div>
+
+<!-- ═══ TOC ═══ -->
+<div class="toc">
+  <h3>THIS WEEK</h3>
+  <div class="toc-grid">
+    <a href="#day1"><span class="day-tag">MON</span> Capstone Planning</a>
+    <a href="#day2"><span class="day-tag">TUE</span> Data Preprocessing Review</a>
+    <a href="#day3"><span class="day-tag">WED</span> Modeling & Pipeline Design</a>
+    <a href="#day4"><span class="day-tag">THU</span> Evaluation & Cross-Validation</a>
+    <a href="#day5"><span class="day-tag">FRI</span> Rest Day</a>
+    <a href="#day6"><span class="day-tag">SAT</span> Deployment Prep</a>
+    <a href="#day7"><span class="day-tag">SUN</span> Phase 1 Reflection</a>
+    <a href="#cheatsheet"><span class="day-tag">REF</span> Cheat Sheet</a>
+    <a href="#flashcards"><span class="day-tag">🧠</span> Self-Assessment (20 cards)</a>
+  </div>
+</div>
+
+<!-- ═══ DAY 1 ═══ -->
+<div class="day-section" id="day1">
+  <div class="day-header">
+    <span class="day-badge">MON</span>
+    <h2>Capstone Planning</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> A successful capstone starts with a clear problem statement, dataset selection, and evaluation plan. This day turns ideas into a reproducible project blueprint.</p>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day1_Capstone_Planning.ipynb')">📓 Day1_Capstone_Planning.ipynb</a>
+    <div class="concepts">
+      <div class="concept">
+        <h4>🎯 Problem framing</h4>
+        <p>Define inputs, target, and success metric first. If the goal is <strong>house price prediction</strong>, the project steps differ from a classification capstone. Keep the scope narrow and measurable.</p>
+      </div>
+      <div class="concept">
+        <h4>🧠 Dataset sanity check</h4>
+        <p>Inspect row counts, feature types, missingness, and label balance. Use a small sample first and verify the dataset is suitable before investing time in modeling.</p>
+      </div>
+      <div class="concept">
+        <h4>🛠️ Project structure</h4>
+        <p>Create folders for <code>data/</code>, <code>notebooks/</code>, <code>src/</code>, and <code>outputs/</code>. Document the pipeline steps so you can reproduce the capstone later.</p>
+      </div>
+      <div class="concept">
+        <h4>📊 Evaluation plan</h4>
+        <p>Choose metrics that match the problem: <code>RMSE</code> for regression, <code>F1</code> for class imbalance, <code>AUC</code> for ranking. Build the metric into the notebook from day one.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Write the project question in one sentence: what you predict and why it matters.</li>
+        <li>Dataset quality is more important than model complexity.</li>
+        <li>Document the train/test split strategy before doing any feature engineering.</li>
+        <li>Establish a validation metric that aligns with the business goal.</li>
+        <li>Capstone planning reduces rework and keeps the week focused.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 2 ═══ -->
+<div class="day-section" id="day2">
+  <div class="day-header">
+    <span class="day-badge">TUE</span>
+    <h2>Data Preprocessing Review</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> This day refreshes the core feature engineering patterns that turn raw data into model-ready input: missing data, encoding, scaling, and target-aware transformation.</p>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day2_Data_Preprocessing_Review.ipynb')">📓 Day2_Data_Preprocessing_Review.ipynb</a>
+    <div class="concepts">
+      <div class="concept">
+        <h4>🧩 Missing values</h4>
+        <p>Choose between <code>dropna()</code>, imputation, and indicator flags. Always compute missingness before splitting and avoid leaking future values into train statistics.</p>
+      </div>
+      <div class="concept">
+        <h4>🔢 Scaling</h4>
+        <p>Scale numeric features after splitting. Use <code>StandardScaler</code> for regression and most tree-based models, <code>RobustScaler</code> for heavy outliers.</p>
+      </div>
+      <div class="concept">
+        <h4>🔠 Encoding</h4>
+        <p>Use one-hot encoding for low-cardinality categoricals and ordinal mapping for natural order. For many categories, prefer target encoding or frequency encoding inside a proper CV loop.</p>
+      </div>
+      <div class="concept">
+        <h4>🔄 Feature review</h4>
+        <p>Revisit engineered features from Week 3, then prioritize those with the strongest correlation to your target. Keep the pipeline simple and explainable.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Fit preprocessors only on training data, then apply to validation/test sets.</li>
+        <li>Use <code>pd.Categorical</code> or <code>OneHotEncoder(drop='first')</code> for categorical features.</li>
+        <li>Keep feature names consistent across train and inference pipelines.</li>
+        <li>Save imputer values, encoder mappings, and scaler parameters with the model pipeline.</li>
+        <li>Preprocessing is the most common source of pipeline bugs — document every transformation.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 3 ═══ -->
+<div class="day-section" id="day3">
+  <div class="day-header">
+    <span class="day-badge">WED</span>
+    <h2>Modeling & Pipeline Design</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> An end-to-end capstone is only as strong as its reproducible pipeline. Today you design the model flow, select baseline algorithms, and build the first training pipeline.</p>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day3_Modeling_and_Pipeline_Design.ipynb')">📓 Day3_Modeling_and_Pipeline_Design.ipynb</a>
+    <div class="concepts">
+      <div class="concept">
+        <h4>🔧 Baseline first</h4>
+        <p>Start with a simple model like <code>LinearRegression</code> or <code>LogisticRegression</code>. Baseline performance tells you whether your features are strong enough before you add complexity.</p>
+      </div>
+      <div class="concept">
+        <h4>🧵 Pipeline patterns</h4>
+        <p>Use <code>Pipeline</code> and <code>ColumnTransformer</code> to combine preprocessing + model training. This is the foundation for deployment-ready ML code.</p>
+      </div>
+      <div class="concept">
+        <h4>📈 Model comparison</h4>
+        <p>Compare models by the same metric on the same validation split. Avoid comparing apples and oranges by using a consistent preprocessing pipeline.</p>
+      </div>
+      <div class="concept">
+        <h4>🗂️ Reproducibility</h4>
+        <p>Set random seeds in preprocessors and model constructors. Save the exact pipeline configuration so you can reproduce training later.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>A complete pipeline includes preprocessing, feature transformation, and a model in one object.</li>
+        <li>Baseline algorithms are your sanity check — complex models should outperform them clearly.</li>
+        <li>Keep validation splits separate from the final test set.</li>
+        <li>Use named transformers to make hyperparameter search easier.</li>
+        <li>Document which model is selected and why before moving to deployment prep.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 4 ═══ -->
+<div class="day-section" id="day4">
+  <div class="day-header">
+    <span class="day-badge">THU</span>
+    <h2>Evaluation & Cross-Validation</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Evaluation turns a promising model into a reliable one. Today you measure performance, detect overfitting, and make your final model selection with cross-validation.</p>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day4_Evaluation_and_CV.ipynb')">📓 Day4_Evaluation_and_CV.ipynb</a>
+    <div class="concepts">
+      <div class="concept">
+        <h4>📏 Metrics matter</h4>
+        <p>Select metrics that reflect the business goal. Use <code>RMSE</code> for regression and <code>F1</code>/<code>ROC AUC</code> for classification. One metric avoids ambiguity.</p>
+      </div>
+      <div class="concept">
+        <h4>🔁 Cross-validation</h4>
+        <p>Use <code>cross_val_score</code> with your full pipeline to measure real generalization. This is the safest way to compare preprocessing + model combinations.</p>
+      </div>
+      <div class="concept">
+        <h4>🧪 Validation curves</h4>
+        <p>Plot training vs validation performance across complexity. If the gap grows, the model is overfitting; if both scores are low, the model underfits.</p>
+      </div>
+      <div class="concept">
+        <h4>✅ Final holdout</h4>
+        <p>Reserve a clean holdout set for the final score. Do not use it for hyperparameter tuning or model selection.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Cross-validation must include preprocessing inside the fold, not applied beforehand.</li>
+        <li>Choose a primary metric and use secondary metrics for additional insight.</li>
+        <li>Use stratified splits for imbalanced classification datasets.</li>
+        <li>Final model selection should happen before evaluating on holdout data.</li>
+        <li>Save the evaluation code so you can reproduce the final reported score.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 5 ═══ -->
+<div class="day-section" id="day5">
+  <div class="day-header">
+    <span class="day-badge rest">FRI</span>
+    <h2>Rest Day</h2>
+    <span class="time">Recovery</span>
+  </div>
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Rest is part of the learning cycle. Use this day to revisit notes, reflect on what worked, and plan any follow-up tweaks for the capstone.</p>
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Review your notebook structure and README documentation.</li>
+        <li>Confirm that the data pipeline is reproducible from raw source to model output.</li>
+        <li>Write a short summary of the week’s findings before moving on.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 6 ═══ -->
+<div class="day-section" id="day6">
+  <div class="day-header">
+    <span class="day-badge">SAT</span>
+    <h2>Deployment Prep</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> A completed ML project is deployable. Today you package your pipeline, export the model, and prepare prediction code for a production-like workflow.</p>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day6_Deployment_Prep_and_Pipelines.ipynb')">📓 Day6_Deployment_Prep_and_Pipelines.ipynb</a>
+    <div class="concepts">
+      <div class="concept">
+        <h4>📦 Save the pipeline</h4>
+        <p>Use <code>joblib.dump()</code> to store the entire trained pipeline. This includes preprocessing, feature transformers, and the final estimator in one reusable object.</p>
+      </div>
+      <div class="concept">
+        <h4>🔄 Inference code</h4>
+        <p>Write a minimal function that accepts raw data, applies the saved pipeline, and returns predictions. Production code should not repeat preprocessing logic manually.</p>
+      </div>
+      <div class="concept">
+        <h4>🧯 Input checks</h4>
+        <p>Validate feature columns, dtypes, and missing values before prediction. A small guard clause prevents bad input from breaking the pipeline.</p>
+      </div>
+      <div class="concept">
+        <h4>🌐 Deployment story</h4>
+        <p>Map your pipeline to a simple deployment target: an API, scheduled batch job, or Azure ML endpoint. The notebook should make it easy to understand the next step.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Save the entire pipeline, not just the model weights.</li>
+        <li>Package preprocessing + model into a single object for inference.</li>
+        <li>Write clear input validation around the prediction entry point.</li>
+        <li>Deployment readiness is the final test of a capstone project.</li>
+        <li>Keep deployment notes inside the notebook for easy handoff.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 7 ═══ -->
+<div class="day-section" id="day7">
+  <div class="day-header">
+    <span class="day-badge">SUN</span>
+    <h2>Phase 1 Reflection</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Reflecting on the capstone consolidates learning. This final day captures wins, technical decisions, and the improvements you would make in a real-world production cycle.</p>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day7_Phase1_Capstone_Reflection.ipynb')">📓 Day7_Phase1_Capstone_Reflection.ipynb</a>
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Summarise what worked, what changed, and what you would improve next.</li>
+        <li>Record the final metric and how the model performed on holdout data.</li>
+        <li>Capture the production checklist: reproducibility, deployment packaging, and monitoring notes.</li>
+        <li>Use this reflection as the foundation for your Week 4 project write-up.</li>
+      </ul>
+    </div>
+    <div class="summary-box">
+      <h3>Phase 1 Capstone Checklist</h3>
+      <p>Define the problem → build reproducible preprocessing → select a strong baseline model → evaluate with CV → save deployable pipeline → write deployment-friendly inference code.</p>
+    </div>
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Week4_Capstone_QuickReference.ipynb')" style="margin-top:1rem">📓 Week4_Capstone_QuickReference.ipynb</a>
+  </div>
+</div>
+
+<!-- ═══ CHEAT SHEET ═══ -->
+<div id="cheatsheet" class="cheatsheet" style="scroll-margin-top:80px">
+  <h3>Week 4 Cheat Sheet — Capstone Workflow</h3>
+  <table class="cheat-table">
+    <thead>
+      <tr><th>Pattern</th><th>Code</th><th>Why it matters</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Train/test split</td><td><code>train_test_split(X, y, test_size=0.2, random_state=42)</code></td><td>Preserves a clean holdout set for final model evaluation.</td></tr>
+      <tr><td>Reproducible pipeline</td><td><code>Pipeline(steps=[('prep', ct), ('model', model)])</code></td><td>Combines preprocessing and modeling into one deployable object.</td></tr>
+      <tr><td>Cross-validation</td><td><code>cross_val_score(pipeline, X, y, cv=5, scoring='f1')</code></td><td>Measures generalization while keeping preprocessing inside each fold.</td></tr>
+      <tr><td>Save model</td><td><code>joblib.dump(pipe, 'pipeline.pkl')</code></td><td>Stores preprocessing + estimator for production reuse.</td></tr>
+      <tr><td>Inference wrapper</td><td><code>predict(raw_df)</code> via loaded pipeline</td><td>Avoids duplicated preprocessing and minimizes runtime errors.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ FLASHCARDS ═══ -->
+<div id="flashcards" class="flashcard-section">
+  <div class="flashcard-header">
+    <div>
+      <h3>Week 4 Flashcards</h3>
+      <p style="color:var(--text2);margin-top:0.5rem;font-size:0.95rem">20 rapid knowledge checks for capstone planning, preprocessing, modeling, evaluation, and deployment.</p>
+    </div>
+    <div class="flashcard-score">Open cards: <span id="score-display">0</span>/20</div>
+  </div>
+  <div class="flashcard-grid">
+    <div class="flashcard" data-id="1">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">1</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-planning">Planning</span> What is the first question you should answer when starting a capstone project?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Define the problem clearly: what is being predicted, what data is available, and which metric will determine success.</div></div>
+    </div>
+    <div class="flashcard" data-id="2">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">2</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-preprocess">Preprocessing</span> Why do you set a fixed random seed in a reproducible pipeline?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">A fixed seed ensures that data splits, model initialization, and stochastic operations produce the same results each time, making experiments repeatable.</div></div>
+    </div>
+    <div class="flashcard" data-id="3">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">3</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-preprocess">Preprocessing</span> What is the safest way to handle missing values in a modeling pipeline?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Impute missing values using a transformer inside the pipeline, fitted on training data only, and then apply the same transform to validation/test data.</div></div>
+    </div>
+    <div class="flashcard" data-id="4">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">4</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-modeling">Modeling</span> What does a scikit-learn Pipeline combine?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">A Pipeline combines preprocessing steps and an estimator into a single object so you can call fit, predict, and score with one unified interface.</div></div>
+    </div>
+    <div class="flashcard" data-id="5">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">5</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-modeling">Modeling</span> Why use ColumnTransformer in an ML pipeline?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">ColumnTransformer lets you apply different preprocessing steps to numeric and categorical columns in the same pipeline.</div></div>
+    </div>
+    <div class="flashcard" data-id="6">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">6</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-evaluation">Evaluation</span> What is the role of a holdout dataset?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">The holdout dataset provides a final unbiased estimate of model performance after training and validation are complete.</div></div>
+    </div>
+    <div class="flashcard" data-id="7">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">7</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-evaluation">Evaluation</span> Why is cross-validation better than a single train/test split?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Cross-validation averages performance over multiple splits, reducing variance and giving a more stable estimate of model generalization.</div></div>
+    </div>
+    <div class="flashcard" data-id="8">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">8</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-planning">Planning</span> What should be included in your capstone README?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">The README should explain the problem, data source, evaluation metric, pipeline steps, model choice, and how to reproduce the results.</div></div>
+    </div>
+    <div class="flashcard" data-id="9">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">9</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-deployment">Deployment</span> What is the key advantage of saving the full fitted pipeline?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Saving the full fitted pipeline preserves preprocessing logic and model parameters together, avoiding mismatched training and inference transforms.</div></div>
+    </div>
+    <div class="flashcard" data-id="10">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">10</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-deployment">Deployment</span> Why should inference code validate input columns?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Validating input columns prevents silent failures or incorrect predictions when the feature set changes in production.</div></div>
+    </div>
+    <div class="flashcard" data-id="11">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">11</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-planning">Planning</span> What is the simplest way to decide if a dataset is fit for a regression capstone?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Check if the target is continuous, has sufficient variance, and whether the features have predictive signal for the target.</div></div>
+    </div>
+    <div class="flashcard" data-id="12">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">12</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-preprocess">Preprocessing</span> When should you use RobustScaler instead of StandardScaler?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Use RobustScaler when numeric features contain outliers, because it scales based on the median and interquartile range.</div></div>
+    </div>
+    <div class="flashcard" data-id="13">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">13</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-modeling">Modeling</span> What is the primary benefit of starting with a linear baseline model?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Linear baselines are fast, interpretable, and set a reference point for whether more complex models are actually improving performance.</div></div>
+    </div>
+    <div class="flashcard" data-id="14">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">14</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-evaluation">Evaluation</span> What does stratified splitting preserve?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Stratified splitting preserves the class distribution between train and test sets for classification problems.</div></div>
+    </div>
+    <div class="flashcard" data-id="15">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">15</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-deployment">Deployment</span> What file format is commonly used to save scikit-learn pipelines?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Joblib is commonly used to serialize scikit-learn pipelines with <code>joblib.dump()</code> and <code>joblib.load()</code>.</div></div>
+    </div>
+    <div class="flashcard" data-id="16">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">16</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-capstone">Capstone</span> What is the final check before declaring the capstone complete?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Confirm that the pipeline is reproducible, the final model is evaluated on holdout data, and the inference code works end-to-end.</div></div>
+    </div>
+    <div class="flashcard" data-id="17">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">17</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-preprocess">Preprocessing</span> Why should you keep categorical feature names stable?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Stable feature names prevent mismatches between training and inference, especially when using one-hot encoding or feature selection.</div></div>
+    </div>
+    <div class="flashcard" data-id="18">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">18</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-modeling">Modeling</span> What is a good sign that your capstone model is overfitting?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">The training score is much higher than the validation score, and validation performance worsens as the model complexity increases.</div></div>
+    </div>
+    <div class="flashcard" data-id="19">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">19</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-evaluation">Evaluation</span> What should you do if the chosen metric is unstable across folds?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Investigate data leakage, ensure consistent preprocessing across folds, and consider whether the metric or features are too sensitive to small sample changes.</div></div>
+    </div>
+    <div class="flashcard" data-id="20">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">20</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-deployment">Deployment</span> What does a production-ready inference wrapper need to do?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">It should validate raw input, load the saved pipeline, apply preprocessing and prediction, and return results in a consistent format.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleCard(el){
+  const card = el.parentElement;
+  card.classList.toggle('open');
+  updateScore();
+}
+function updateScore(){
+  const opened = document.querySelectorAll('.flashcard.open').length;
+  document.getElementById('score-display').textContent = opened;
+}
+function copyNotebookPath(notebookName) {
+  const fullUrl = `https://github.com/praveent27/ai-engineer-lab/blob/main/weeks/week-04/${notebookName}`;
+  navigator.clipboard.writeText(fullUrl).then(() => {
+    const notification = document.createElement('div');
+    notification.textContent = `Copied: ${fullUrl}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--green);
+      color: var(--bg);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease-in forwards';
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
+  });
+}
+</script>
+
+<style>
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+</style>
+
+<footer>
+  <p>Built by <a href="https://praveent27.github.io" target="_blank">Praveen Kumar Thumati</a> · AI Engineer Lab · <a href="../../index.html">← Home</a></p>
+</footer>
+
+</body>
+</html>
