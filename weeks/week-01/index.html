@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 1 — Python for ML & Math Refresh | AI Engineer Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;600&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17;--surface:#111827;--surface2:#1a2332;--border:#1e293b;
+  --text:#e2e8f0;--text2:#94a3b8;--accent:#f59e0b;--accent2:#fbbf24;
+  --blue:#3b82f6;--green:#22c55e;--purple:#a78bfa;--red:#ef4444;
+  --cyan:#22d3ee;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,23,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0.8rem 2rem}
+nav .inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+nav .logo{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--accent);text-decoration:none}
+nav .back{color:var(--text2);text-decoration:none;font-size:0.85rem;transition:color 0.3s}
+nav .back:hover{color:var(--accent)}
+
+.container{max-width:900px;margin:0 auto;padding:2rem}
+
+/* ── HEADER ── */
+.week-header{padding:3rem 0;border-bottom:1px solid var(--border);margin-bottom:3rem}
+.week-label{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:0.5rem}
+.week-header h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3rem);margin-bottom:1rem}
+.week-header .desc{color:var(--text2);font-size:1.05rem;max-width:700px;margin-bottom:1.5rem}
+.meta-row{display:flex;gap:1.5rem;flex-wrap:wrap}
+.meta-item{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--text2);background:var(--surface);padding:0.4rem 0.8rem;border-radius:5px;border:1px solid var(--border)}
+.meta-item span{color:var(--accent)}
+
+/* ── TOC ── */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem 2rem;margin-bottom:3rem}
+.toc h3{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace;letter-spacing:1px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.4rem}
+.toc a{color:var(--text2);text-decoration:none;font-size:0.88rem;padding:0.3rem 0;display:flex;align-items:center;gap:0.5rem;transition:color 0.3s}
+.toc a:hover{color:var(--accent)}
+.toc a .day-tag{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--cyan);min-width:35px}
+
+/* ── DAY SECTIONS ── */
+.day-section{margin-bottom:4rem;scroll-margin-top:80px}
+.day-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.8rem;border-bottom:2px solid var(--border)}
+.day-badge{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--bg);background:var(--accent);padding:0.3rem 0.7rem;border-radius:4px;font-weight:600;white-space:nowrap}
+.day-badge.rest{background:var(--text2)}
+.day-header h2{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.day-header .time{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--text2);margin-left:auto}
+
+.day-content p{margin-bottom:1rem;color:var(--text2)}
+.day-content strong{color:var(--text)}
+
+/* ── CONCEPT CARDS ── */
+.concepts{display:grid;gap:0.8rem;margin:1.5rem 0}
+.concept{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;transition:border-color 0.3s}
+.concept:hover{border-color:var(--blue)}
+.concept h4{font-size:0.95rem;color:var(--blue);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.5rem}
+.concept p{font-size:0.88rem;color:var(--text2);margin:0}
+.concept code{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--surface2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--cyan)}
+
+/* ── CODE BLOCKS ── */
+pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;overflow-x:auto;margin:1rem 0;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;line-height:1.7;color:var(--cyan)}
+
+/* ── KEY TAKEAWAYS ── */
+.takeaways{background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(59,130,246,0.08));border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:1.5rem 2rem;margin:1.5rem 0}
+.takeaways h3{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace}
+.takeaways ul{list-style:none;padding:0}
+.takeaways li{padding:0.3rem 0;font-size:0.9rem;color:var(--text);padding-left:1.5rem;position:relative}
+.takeaways li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+
+/* ── CHEAT SHEET ── */
+.cheatsheet{margin:2rem 0}
+.cheatsheet h3{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:1rem;color:var(--accent)}
+.cheat-table{width:100%;border-collapse:collapse;font-size:0.85rem}
+.cheat-table th{text-align:left;padding:0.6rem 1rem;background:var(--surface2);color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:0.75rem;letter-spacing:1px;border-bottom:2px solid var(--border)}
+.cheat-table td{padding:0.5rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.cheat-table td:first-child{color:var(--text);font-weight:600;white-space:nowrap}
+.cheat-table td:nth-child(2){font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--cyan)}
+.cheat-table td:last-child{color:var(--text2)}
+.cheat-table tr:hover{background:rgba(59,130,246,0.05)}
+
+/* ── NOTEBOOK LINKS ── */
+.notebook-link{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);padding:0.5rem 1rem;border-radius:6px;text-decoration:none;color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;transition:all 0.3s;margin:0.3rem 0.3rem 0.3rem 0}
+.notebook-link:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+/* ── ML MAPPING ── */
+.ml-map{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1.5rem 0}
+.ml-map h4{font-size:0.85rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace}
+.ml-map-item{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;padding:0.4rem 0;font-size:0.85rem}
+.ml-map-item .arrow{color:var(--accent)}
+.ml-map-item .left{color:var(--text2);text-align:right}
+.ml-map-item .right{color:var(--cyan)}
+
+/* ── SUMMARY BOX ── */
+.summary-box{background:var(--surface2);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:1.5rem;margin:2rem 0}
+.summary-box h3{font-size:1rem;color:var(--green);margin-bottom:0.5rem}
+.summary-box p{font-size:0.9rem;color:var(--text2)}
+
+/* ── FLASHCARDS ── */
+.flashcard-section{margin:4rem 0;scroll-margin-top:80px}
+.flashcard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.flashcard-header h3{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.flashcard-score{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--text2);background:var(--surface);padding:0.5rem 1rem;border-radius:6px;border:1px solid var(--border)}
+.flashcard-score span{color:var(--green);font-weight:600}
+.flashcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:1rem}
+@media(max-width:500px){.flashcard-grid{grid-template-columns:1fr}}
+.flashcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.3s}
+.flashcard:hover{border-color:rgba(245,158,11,0.4)}
+.flashcard-q{padding:1.2rem 1.5rem;cursor:pointer;display:flex;align-items:flex-start;gap:0.8rem;user-select:none;-webkit-user-select:none}
+.flashcard-q:hover{background:rgba(245,158,11,0.03)}
+.flashcard-num{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--accent);background:rgba(245,158,11,0.1);padding:0.25rem 0.5rem;border-radius:4px;white-space:nowrap;min-width:28px;text-align:center;margin-top:2px}
+.flashcard-text{font-size:0.92rem;color:var(--text);line-height:1.5;flex:1}
+.flashcard-toggle{color:var(--text2);font-size:0.8rem;margin-top:2px;transition:transform 0.3s;flex-shrink:0}
+.flashcard.open .flashcard-toggle{transform:rotate(180deg)}
+.flashcard-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s ease}
+.flashcard.open .flashcard-a{max-height:500px}
+.flashcard-a-inner{padding:0 1.5rem 1.2rem 3.5rem;font-size:0.88rem;color:var(--text2);line-height:1.6;border-top:1px dashed var(--border)}
+.flashcard-a-inner{padding-top:1rem}
+.flashcard-a-inner code{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--surface2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--cyan)}
+.flashcard-a-inner strong{color:var(--text)}
+.flashcard-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;padding:0.15rem 0.45rem;border-radius:3px;margin-right:0.3rem}
+.tag-numpy{background:rgba(59,130,246,0.15);color:var(--blue)}
+.tag-pandas{background:rgba(34,197,94,0.15);color:var(--green)}
+.tag-viz{background:rgba(167,139,250,0.15);color:var(--purple)}
+.tag-linalg{background:rgba(245,158,11,0.15);color:var(--accent)}
+.tag-stats{background:rgba(34,211,238,0.15);color:var(--cyan)}
+.tag-eda{background:rgba(239,68,68,0.15);color:var(--red)}
+
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;margin-top:4rem}
+footer p{color:var(--text2);font-size:0.8rem}
+footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:768px){
+  .day-header{flex-wrap:wrap}
+  .day-header .time{margin-left:0;width:100%}
+  .meta-row{gap:0.5rem}
+  .ml-map-item{grid-template-columns:1fr;gap:0.2rem}
+  .ml-map-item .left{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a href="../../index.html" class="logo">AI Lab</a>
+    <a href="../../index.html#weeks" class="back">← Back to All Weeks</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══ HEADER ═══ -->
+<div class="week-header">
+  <div class="week-label">PHASE 1 · WEEK 01</div>
+  <h1>Python for ML & Math Refresh</h1>
+  <p class="desc">The foundation layer. NumPy arrays power every ML library. Pandas is your SQL in Python. Linear algebra is the language neural networks speak. This week wires those connections into your brain.</p>
+  <div class="meta-row">
+    <div class="meta-item"><span>6</span> Study Days</div>
+    <div class="meta-item"><span>~14h</span> Total</div>
+    <div class="meta-item"><span>6</span> Notebooks</div>
+    <div class="meta-item"><span>1</span> Project</div>
+    <div class="meta-item">Type: <span>Generic AI</span></div>
+  </div>
+</div>
+
+<!-- ═══ TOC ═══ -->
+<div class="toc">
+  <h3>THIS WEEK</h3>
+  <div class="toc-grid">
+    <a href="#day1"><span class="day-tag">MON</span> NumPy Fundamentals</a>
+    <a href="#day2"><span class="day-tag">TUE</span> Pandas Deep Dive</a>
+    <a href="#day3"><span class="day-tag">WED</span> Matplotlib & Seaborn</a>
+    <a href="#day4"><span class="day-tag">THU</span> Linear Algebra for ML</a>
+    <a href="#day5"><span class="day-tag">FRI</span> Rest Day</a>
+    <a href="#day6"><span class="day-tag">SAT</span> Statistics for ML</a>
+    <a href="#day7"><span class="day-tag">SUN</span> EDA Project — Titanic</a>
+    <a href="#cheatsheet"><span class="day-tag">REF</span> Cheat Sheet</a>
+    <a href="#flashcards"><span class="day-tag">🧠</span> Self-Assessment (20 cards)</a>
+  </div>
+</div>
+
+<!-- ═══ DAY 1 ═══ -->
+<div class="day-section" id="day1">
+  <div class="day-header">
+    <span class="day-badge">MON</span>
+    <h2>NumPy Fundamentals</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> NumPy is the bedrock of every ML library in Python. PyTorch tensors, scikit-learn matrices, Pandas DataFrames — they're all NumPy arrays underneath. If you understand NumPy, you understand the data structures of ML.</p>
+
+    <a href="#" class="notebook-link">📓 Day1_NumPy_Fundamentals.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>🧱 Arrays vs Lists</h4>
+        <p>NumPy arrays are fixed-type, contiguous memory blocks. Operations are <strong>vectorised</strong> — no Python loops needed. <code>np.array([1,2,3])</code> creates a vector. <code>np.zeros((3,4))</code> creates a matrix. Always use <code>np.random.seed(42)</code> for reproducibility.</p>
+      </div>
+      <div class="concept">
+        <h4>📐 Broadcasting</h4>
+        <p>NumPy automatically aligns arrays of different shapes for element-wise operations. This is how you normalise columns in one line: <code>(data - data.mean(axis=0)) / data.std(axis=0)</code>. Rules: dimensions are compared right-to-left, size-1 dimensions stretch.</p>
+      </div>
+      <div class="concept">
+        <h4>⚡ Vectorised Operations</h4>
+        <p>Replace Python loops with NumPy operations for 50–100x speedups. <code>a + b</code>, <code>a @ b</code>, <code>np.where()</code>, boolean masking (<code>arr[arr > 5]</code>). If you're writing <code>for i in range(len(arr))</code>, there's almost always a NumPy way.</p>
+      </div>
+      <div class="concept">
+        <h4>🧠 ML Connection: Forward Pass</h4>
+        <p>A neural network layer is literally <code>output = input @ weights + bias</code> followed by an activation function. Matrix multiplication (<code>@</code>) IS the core computation. Cosine similarity (<code>dot(a,b) / (|a|*|b|)</code>) is how vector search works in RAG.</p>
+      </div>
+    </div>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li><code>axis=0</code> collapses rows (operates DOWN columns). <code>axis=1</code> collapses columns (operates ACROSS rows).</li>
+        <li><code>reshape(-1)</code> flattens. <code>reshape(2,-1)</code> auto-calculates the missing dimension.</li>
+        <li><code>np.linalg.norm(v)</code> gives vector magnitude — used in distance calculations and normalisation.</li>
+        <li>Boolean indexing (<code>arr[arr > 5]</code>) is how you filter data without loops — the ML workhorse.</li>
+        <li>Always set <code>np.random.seed()</code> at the top of every notebook for reproducible results.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 2 ═══ -->
+<div class="day-section" id="day2">
+  <div class="day-header">
+    <span class="day-badge">TUE</span>
+    <h2>Pandas Deep Dive</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Pandas is how you load, clean, transform, and explore real data before feeding it to any ML model. Every Kaggle kernel starts with Pandas. Every data pipeline ends with a Pandas-like operation.</p>
+
+    <a href="#" class="notebook-link">📓 Day2_Pandas_DeepDive.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>📊 DataFrame = SQL Table</h4>
+        <p><code>df[df['col'] > 5]</code> = WHERE. <code>df.groupby('col').mean()</code> = GROUP BY. <code>pd.merge(df1, df2, on='key')</code> = JOIN. <code>.transform('mean')</code> = window function. Your SQL instincts transfer directly.</p>
+      </div>
+      <div class="concept">
+        <h4>🔗 Method Chaining</h4>
+        <p>Chain operations for clean, readable pipelines: <code>df.assign(new=...).query('x > 5').groupby('col').agg(...).sort_values(...)</code>. One expression, no intermediate variables.</p>
+      </div>
+      <div class="concept">
+        <h4>🩹 Missing Data</h4>
+        <p><code>df.isnull().sum()</code> to count. <code>fillna(median())</code> for numeric. <code>fillna(mode()[0])</code> for categorical. <code>dropna(subset=['critical_col'])</code> when you can't impute. Always check missing % first.</p>
+      </div>
+      <div class="concept">
+        <h4>📁 I/O: Parquet > CSV</h4>
+        <p><code>df.to_parquet('file.parquet')</code> is faster, smaller, and preserves dtypes. Use CSV for sharing, Parquet for processing — you already know this from your data engineering background.</p>
+      </div>
+    </div>
+
+    <div class="ml-map">
+      <h4>PANDAS ↔ SQL MAPPING</h4>
+      <div class="ml-map-item"><span class="left">SELECT col1, col2</span><span class="arrow">→</span><span class="right">df[['col1', 'col2']]</span></div>
+      <div class="ml-map-item"><span class="left">WHERE col > 5</span><span class="arrow">→</span><span class="right">df[df['col'] > 5]</span></div>
+      <div class="ml-map-item"><span class="left">GROUP BY col</span><span class="arrow">→</span><span class="right">df.groupby('col')</span></div>
+      <div class="ml-map-item"><span class="left">ORDER BY col DESC</span><span class="arrow">→</span><span class="right">df.sort_values('col', ascending=False)</span></div>
+      <div class="ml-map-item"><span class="left">JOIN ON key</span><span class="arrow">→</span><span class="right">pd.merge(df1, df2, on='key')</span></div>
+      <div class="ml-map-item"><span class="left">WINDOW FUNC</span><span class="arrow">→</span><span class="right">.groupby().transform()</span></div>
+      <div class="ml-map-item"><span class="left">CASE WHEN</span><span class="arrow">→</span><span class="right">np.where() or .apply()</span></div>
+    </div>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li><code>.loc[]</code> = label-based, <code>.iloc[]</code> = integer-position-based. Use <code>.loc</code> by default.</li>
+        <li><code>.query("col > 5")</code> is cleaner than <code>df[df['col'] > 5]</code> for complex filters.</li>
+        <li><code>.apply(func)</code> for custom logic. Lambda for one-liners: <code>.apply(lambda x: x.upper())</code>.</li>
+        <li>Check <code>df.dtypes</code> early — wrong types (string instead of numeric) cause silent bugs.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 3 ═══ -->
+<div class="day-section" id="day3">
+  <div class="day-header">
+    <span class="day-badge">WED</span>
+    <h2>Matplotlib & Seaborn</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Visualisation is how you debug data AND models. Confusion matrices, loss curves, feature importance plots, and correlation heatmaps are your daily tools as an ML practitioner.</p>
+
+    <a href="#" class="notebook-link">📓 Day3_Matplotlib_Seaborn.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>📈 Matplotlib = Full Control</h4>
+        <p>Use the <code>fig, ax = plt.subplots()</code> pattern — never <code>plt.plot()</code> directly. Subplots give you full control. Always: <code>ax.set_title()</code>, <code>ax.set_xlabel()</code>, <code>ax.legend()</code>, <code>plt.tight_layout()</code>, <code>plt.savefig('plot.png', dpi=150)</code>.</p>
+      </div>
+      <div class="concept">
+        <h4>🎨 Seaborn = Statistical Plots</h4>
+        <p><code>sns.heatmap(df.corr())</code> for correlation. <code>sns.pairplot(df, hue='target')</code> for all relationships at once. <code>sns.boxplot(x='cat', y='num')</code> for distributions by group. Seaborn wraps Matplotlib with beautiful defaults.</p>
+      </div>
+      <div class="concept">
+        <h4>🤖 ML-Specific Charts</h4>
+        <p>Training loss curves (train vs val — spot overfitting), confusion matrices (model prediction errors), feature importance (horizontal bar charts), ROC curves. You'll build all of these during the journey.</p>
+      </div>
+    </div>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Always use <code>fig, ax = plt.subplots(figsize=(10,6))</code> — not <code>plt.plot()</code> directly.</li>
+        <li><code>sns.heatmap(corr, annot=True, cmap='RdBu_r', center=0)</code> — your go-to for correlation matrices.</li>
+        <li>When mean ≫ median in a distribution → right-skewed data → consider log transform.</li>
+        <li>Pair plots (<code>sns.pairplot</code>) should be your first visualisation on any new dataset.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 4 ═══ -->
+<div class="day-section" id="day4">
+  <div class="day-header">
+    <span class="day-badge">THU</span>
+    <h2>Linear Algebra for ML</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Neural network layers are matrix multiplications. Embeddings are vectors. PCA is eigenvalue decomposition. Cosine similarity powers Azure AI Search. Understanding these operations makes every ML concept click.</p>
+
+    <a href="#" class="notebook-link">📓 Day4_Linear_Algebra_for_ML.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>→ Dot Product = Similarity Measure</h4>
+        <p><code>np.dot(a, b)</code> — positive means similar direction, zero means perpendicular, negative means opposite. This is literally how attention works in transformers and how vector search finds relevant documents.</p>
+      </div>
+      <div class="concept">
+        <h4>× Matrix Multiplication = Neural Layer</h4>
+        <p><code>output = X @ W + b</code> — that's a neural network layer. X is input data (samples × features), W is weights (features × neurons), output is (samples × neurons). Shape rule: (m×n) @ (n×p) → (m×p).</p>
+      </div>
+      <div class="concept">
+        <h4>λ Eigenvalues = PCA</h4>
+        <p>Eigenvectors of the covariance matrix = principal components (directions of maximum variance). Eigenvalues = how much variance each component explains. PCA is dimensionality reduction via eigendecomposition.</p>
+      </div>
+      <div class="concept">
+        <h4>‖ Norms = Distance & Regularisation</h4>
+        <p>L2 norm = Euclidean distance (KNN). L1 norm = Manhattan distance (Lasso regularisation, drives weights to zero). L2 regularisation (Ridge) shrinks weights. These show up in model tuning constantly.</p>
+      </div>
+    </div>
+
+    <div class="ml-map">
+      <h4>LINEAR ALGEBRA → ML MAPPING</h4>
+      <div class="ml-map-item"><span class="left">Dot product</span><span class="arrow">→</span><span class="right">Attention, similarity search, layer computation</span></div>
+      <div class="ml-map-item"><span class="left">Cosine similarity</span><span class="arrow">→</span><span class="right">RAG retrieval, Azure AI Search, embeddings</span></div>
+      <div class="ml-map-item"><span class="left">Matrix multiply</span><span class="arrow">→</span><span class="right">Every neural network layer</span></div>
+      <div class="ml-map-item"><span class="left">Eigendecomposition</span><span class="arrow">→</span><span class="right">PCA, spectral clustering</span></div>
+      <div class="ml-map-item"><span class="left">L1 / L2 norm</span><span class="arrow">→</span><span class="right">Regularisation, distance metrics</span></div>
+      <div class="ml-map-item"><span class="left">Unit vector</span><span class="arrow">→</span><span class="right">Normalised embeddings</span></div>
+    </div>
+
+    <div class="summary-box">
+      <h3>🎥 Recommended Watch</h3>
+      <p><strong>3Blue1Brown — "Essence of Linear Algebra"</strong> playlist on YouTube. 15 short videos that build geometric intuition for vectors, matrix transformations, and eigenvalues. The best visual explanation of these concepts that exists.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 5 ═══ -->
+<div class="day-section" id="day5">
+  <div class="day-header">
+    <span class="day-badge rest">FRI</span>
+    <h2>Rest Day</h2>
+    <span class="time">0 hours</span>
+  </div>
+  <div class="day-content">
+    <p>Take the day off. If you feel like doing something light, skim the syllabus of <strong>Andrew Ng's Machine Learning Specialisation</strong> on Coursera to see what's coming in weeks 2–8. Don't start any new material.</p>
+  </div>
+</div>
+
+<!-- ═══ DAY 6 ═══ -->
+<div class="day-section" id="day6">
+  <div class="day-header">
+    <span class="day-badge">SAT</span>
+    <h2>Statistics for ML</h2>
+    <span class="time">3 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Distributions underpin model assumptions. Bayes theorem is the foundation of probabilistic ML. Hypothesis testing is how you compare models. Entropy drives decision tree splits. Statistics is the "why" behind every ML algorithm.</p>
+
+    <a href="#" class="notebook-link">📓 Day6_Statistics_for_ML.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>📊 Descriptive Stats</h4>
+        <p>Mean (sensitive to outliers) vs median (robust). When mean ≫ median = right skew. IQR for outlier detection: anything below Q1-1.5×IQR or above Q3+1.5×IQR is an outlier. Use <code>df.describe()</code> as your first check.</p>
+      </div>
+      <div class="concept">
+        <h4>🔔 Normal Distribution</h4>
+        <p>68% of data within 1σ, 95% within 2σ, 99.7% within 3σ. Central Limit Theorem: sample means are always normally distributed (even from non-normal populations) — this is why BatchNorm works in neural networks.</p>
+      </div>
+      <div class="concept">
+        <h4>🧮 Bayes Theorem</h4>
+        <p><code>P(A|B) = P(B|A) × P(A) / P(B)</code> — "update your belief given evidence." This is exactly how Naive Bayes classifier works: given word "free" appears, what's the probability of spam? Foundational for probabilistic ML.</p>
+      </div>
+      <div class="concept">
+        <h4>📏 Entropy & Information Gain</h4>
+        <p><code>H = -Σ p × log₂(p)</code> — measures uncertainty. High entropy = unpredictable. Decision trees split data to minimise entropy (maximise information gain). Cross-entropy loss in neural networks is based on this same concept.</p>
+      </div>
+    </div>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>p-value < 0.05 → statistically significant difference. Used for comparing model performances and A/B testing.</li>
+        <li>Correlation ≠ causation. And Pearson r ≈ 0 doesn't mean no relationship — always check scatter plots for non-linear patterns.</li>
+        <li>Z-score normalisation: <code>(x - mean) / std</code>. Min-max: <code>(x - min) / (max - min)</code>. Know when to use each.</li>
+        <li>Entropy drives decision tree splits. Cross-entropy is the loss function for classification in neural networks.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 7 ═══ -->
+<div class="day-section" id="day7">
+  <div class="day-header">
+    <span class="day-badge">SUN</span>
+    <h2>EDA Mini-Project — Titanic</h2>
+    <span class="time">3 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> This is where everything comes together. A complete Exploratory Data Analysis following a repeatable template you'll use before building ANY model, on ANY dataset, for the rest of your career.</p>
+
+    <a href="#" class="notebook-link">📓 Day7_EDA_MiniProject_Titanic.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>📋 The EDA Checklist</h4>
+        <p>1. Load & inspect shape/dtypes. 2. Check missing values. 3. Describe numeric features. 4. Plot distributions. 5. Analyse target balance. 6. Bivariate: target vs each feature. 7. Correlation heatmap. 8. Missing data strategy. 9. Feature engineering. 10. Document findings.</p>
+      </div>
+      <div class="concept">
+        <h4>🔍 Key Findings</h4>
+        <p>Women survived at 74% vs men at 19%. 1st class: 63%, 3rd class: 24%. Children had highest survival. Fare is heavily right-skewed. Family size of 2–4 had best survival. These insights directly inform feature engineering for the model.</p>
+      </div>
+      <div class="concept">
+        <h4>🛠️ Feature Engineering</h4>
+        <p><code>family_size = sibsp + parch + 1</code>. <code>is_alone = family_size == 1</code>. Age groups via <code>pd.cut()</code>. Title extraction from name. These handcrafted features often outperform raw features in tree-based models.</p>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <h3>✅ Week 1 Complete — Checkpoint</h3>
+      <p>You can now: create and manipulate NumPy arrays, perform full data analysis with Pandas, create publication-quality plots, explain dot products and eigenvalues in ML context, describe Bayes theorem and hypothesis testing, and execute a complete EDA workflow. <strong>Push your notebooks to GitHub. This IS your portfolio.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CHEAT SHEET ═══ -->
+<div class="day-section" id="cheatsheet">
+  <div class="cheatsheet">
+    <h3>Week 1 — Master Cheat Sheet</h3>
+
+    <h4 style="color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;margin:1.5rem 0 0.5rem;letter-spacing:1px">NUMPY</h4>
+    <table class="cheat-table">
+      <tr><th>Operation</th><th>Syntax</th><th>Note</th></tr>
+      <tr><td>Create array</td><td>np.array([1,2,3])</td><td>From list</td></tr>
+      <tr><td>Zeros / Ones</td><td>np.zeros((3,4))</td><td>Shape as tuple</td></tr>
+      <tr><td>Random normal</td><td>np.random.randn(3,3)</td><td>Mean=0, std=1</td></tr>
+      <tr><td>Reshape</td><td>arr.reshape(2,-1)</td><td>-1 auto-calculates</td></tr>
+      <tr><td>Boolean filter</td><td>arr[arr > 5]</td><td>Returns matching elements</td></tr>
+      <tr><td>Matrix multiply</td><td>A @ B</td><td>(m×n) @ (n×p) → (m×p)</td></tr>
+      <tr><td>Column means</td><td>arr.mean(axis=0)</td><td>axis=0 = down columns</td></tr>
+      <tr><td>Row sums</td><td>arr.sum(axis=1)</td><td>axis=1 = across rows</td></tr>
+      <tr><td>Vector norm</td><td>np.linalg.norm(v)</td><td>Euclidean magnitude</td></tr>
+      <tr><td>Cosine similarity</td><td>dot(a,b)/(|a|*|b|)</td><td>Range: -1 to +1</td></tr>
+    </table>
+
+    <h4 style="color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;margin:1.5rem 0 0.5rem;letter-spacing:1px">PANDAS</h4>
+    <table class="cheat-table">
+      <tr><th>Operation</th><th>Syntax</th><th>Note</th></tr>
+      <tr><td>Select columns</td><td>df[['col1','col2']]</td><td>Double brackets for multiple</td></tr>
+      <tr><td>Filter rows</td><td>df.query("col > 5")</td><td>SQL-like syntax</td></tr>
+      <tr><td>Group + aggregate</td><td>df.groupby('col').agg({...})</td><td>Dict of col→func</td></tr>
+      <tr><td>Window function</td><td>.groupby().transform('mean')</td><td>Keeps original shape</td></tr>
+      <tr><td>Merge / Join</td><td>pd.merge(df1, df2, on='key')</td><td>how='left','right','outer'</td></tr>
+      <tr><td>Null count</td><td>df.isnull().sum()</td><td>Check early, check often</td></tr>
+      <tr><td>Fill nulls</td><td>df['col'].fillna(median())</td><td>Or mode() for categorical</td></tr>
+      <tr><td>Apply function</td><td>df['col'].apply(func)</td><td>Custom transformations</td></tr>
+      <tr><td>Pivot table</td><td>df.pivot_table(values, index, columns)</td><td>aggfunc='sum'/'mean'</td></tr>
+      <tr><td>Save parquet</td><td>df.to_parquet('file.parquet')</td><td>Fastest, preserves types</td></tr>
+    </table>
+
+    <h4 style="color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;margin:1.5rem 0 0.5rem;letter-spacing:1px">VISUALISATION</h4>
+    <table class="cheat-table">
+      <tr><th>Chart</th><th>Syntax</th><th>When to Use</th></tr>
+      <tr><td>Histogram</td><td>sns.histplot(df['col'], kde=True)</td><td>Distribution of one variable</td></tr>
+      <tr><td>Box plot</td><td>sns.boxplot(x='cat', y='num', data=df)</td><td>Distribution + outliers by group</td></tr>
+      <tr><td>Scatter</td><td>sns.scatterplot(x='x', y='y', data=df)</td><td>Relationship between 2 vars</td></tr>
+      <tr><td>Heatmap</td><td>sns.heatmap(df.corr(), annot=True)</td><td>Correlation matrix</td></tr>
+      <tr><td>Pair plot</td><td>sns.pairplot(df, hue='target')</td><td>All pairwise relationships</td></tr>
+      <tr><td>Bar + CI</td><td>sns.barplot(x='cat', y='num')</td><td>Mean with confidence interval</td></tr>
+    </table>
+
+    <h4 style="color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;margin:1.5rem 0 0.5rem;letter-spacing:1px">STATISTICS & LINEAR ALGEBRA</h4>
+    <table class="cheat-table">
+      <tr><th>Concept</th><th>Formula / Syntax</th><th>ML Application</th></tr>
+      <tr><td>Z-score</td><td>(x - mean) / std</td><td>Standard scaling for features</td></tr>
+      <tr><td>Min-max</td><td>(x - min) / (max - min)</td><td>Normalise to [0, 1]</td></tr>
+      <tr><td>Bayes theorem</td><td>P(A|B) = P(B|A)·P(A) / P(B)</td><td>Naive Bayes classifier</td></tr>
+      <tr><td>Entropy</td><td>H = -Σ p·log₂(p)</td><td>Decision tree splits</td></tr>
+      <tr><td>t-test</td><td>stats.ttest_ind(a, b)</td><td>Compare model performances</td></tr>
+      <tr><td>Pearson r</td><td>np.corrcoef(x, y)</td><td>Feature selection</td></tr>
+      <tr><td>Dot product</td><td>np.dot(a, b)</td><td>Neural layers, attention</td></tr>
+      <tr><td>Eigenvalues</td><td>np.linalg.eig(A)</td><td>PCA dimensionality reduction</td></tr>
+    </table>
+
+    <a href="#" class="notebook-link" style="margin-top:1rem">📓 Week1_Syntax_QuickReference.ipynb</a>
+  </div>
+</div>
+
+<!-- ═══ SELF-ASSESSMENT FLASHCARDS ═══ -->
+<div class="flashcard-section" id="flashcards">
+  <div class="flashcard-header">
+    <h3>🧠 Self-Assessment</h3>
+    <div class="flashcard-score">Score: <span id="score-display">0</span> / 20 revealed</div>
+  </div>
+  <p style="color:var(--text2);margin-bottom:1.5rem;font-size:0.92rem">Click a question to reveal the answer. Try answering in your head first — if you can explain it without looking, you've got it. Aim for 16/20+ before moving to Week 2.</p>
+
+  <div class="flashcard-grid">
+
+    <div class="flashcard" data-id="1">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">01</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-numpy">NumPy</span> What is the difference between a Python list and a NumPy array? Why does it matter for ML?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">NumPy arrays are <strong>fixed-type</strong> and stored in <strong>contiguous memory</strong>, enabling vectorised operations (C-level loops instead of Python loops). This makes them <strong>50–100x faster</strong> for numerical operations. ML libraries (scikit-learn, PyTorch) are built on this — every weight matrix, every batch of images, every embedding is a NumPy-style array.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="2">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">02</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-numpy">NumPy</span> What does <code>axis=0</code> vs <code>axis=1</code> mean in <code>arr.sum(axis=?)</code>?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>axis=0</code> collapses rows — operates <strong>down</strong> each column (gives column-wise results). <code>axis=1</code> collapses columns — operates <strong>across</strong> each row (gives row-wise results). Think of it as: the axis you specify is the one that <strong>disappears</strong>.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="3">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">03</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-numpy">NumPy</span> Explain broadcasting. What happens when you do <code>(data - data.mean(axis=0)) / data.std(axis=0)</code>?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Broadcasting automatically aligns arrays of different shapes. Here, <code>data</code> is (n, m) and <code>data.mean(axis=0)</code> is (m,). NumPy stretches the (m,) vector across all n rows, subtracting each column's mean from every row. The result is <strong>z-score normalisation</strong> — each column gets mean≈0, std≈1. This is standard feature scaling in ML.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="4">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">04</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-numpy">NumPy</span> Write the code for a neural network forward pass in NumPy (one layer).</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>z = X @ W + b</code> followed by <code>a = sigmoid(z)</code> where <code>sigmoid = lambda x: 1/(1+np.exp(-x))</code>. X is (samples × features), W is (features × neurons), b is (neurons,). The <code>@</code> is matrix multiplication — the core computation of every neural network layer.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="5">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">05</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-numpy">NumPy</span> What is cosine similarity? How is it used in Azure AI Search?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>cos_sim = dot(a,b) / (|a| × |b|)</code>. It measures the angle between two vectors, ranging from -1 (opposite) to +1 (identical direction). In Azure AI Search vector search, documents and queries are converted to <strong>embedding vectors</strong>, and cosine similarity finds the most semantically similar documents — the core of RAG retrieval.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="6">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">06</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pandas">Pandas</span> What is the Pandas equivalent of a SQL <code>GROUP BY col HAVING count > 5</code>?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>df.groupby('col').filter(lambda g: len(g) > 5)</code> — this keeps entire groups. Or aggregate first then filter: <code>result = df.groupby('col').agg(...)</code> followed by <code>result[result['count'] > 5]</code>. The second approach is more common in practice.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="7">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">07</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pandas">Pandas</span> What is <code>.transform()</code> and how does it differ from <code>.agg()</code>?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>.agg()</code> reduces — returns one row per group (like SQL GROUP BY). <code>.transform()</code> broadcasts — returns a value for <strong>every original row</strong>, like a SQL window function. Example: <code>df.groupby('dept')['salary'].transform('mean')</code> gives each employee their department's average salary alongside their own row.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="8">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">08</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pandas">Pandas</span> When should you use <code>.loc[]</code> vs <code>.iloc[]</code>?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>.loc[]</code> is <strong>label-based</strong> — uses index labels and column names. <code>.iloc[]</code> is <strong>integer position-based</strong> — uses 0-indexed positions. Use <code>.loc</code> by default for clarity. Use <code>.iloc</code> when you need positional access (e.g., "first 5 rows" = <code>df.iloc[:5]</code>). Key gotcha: <code>.loc</code> slicing is <strong>inclusive</strong> on both ends; <code>.iloc</code> is <strong>exclusive</strong> on the end.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="9">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">09</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pandas">Pandas</span> Why is Parquet better than CSV for data work? Name 3 reasons.</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><strong>1.</strong> Columnar storage — reads only the columns you need, much faster for analytics. <strong>2.</strong> Preserves dtypes — no "is this column a string or int?" bugs on reload. <strong>3.</strong> Compressed — typically 5–10x smaller than CSV. Bonus: supports schema evolution and is the native format for Spark, Delta Lake, and most modern data platforms.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="10">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">10</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-viz">Visualisation</span> When should you use a box plot vs a histogram vs a violin plot?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><strong>Histogram:</strong> see the full shape of one variable's distribution (skew, modes, gaps). <strong>Box plot:</strong> compare distributions across groups + spot outliers (IQR-based). <strong>Violin plot:</strong> like a box plot but also shows the distribution shape (KDE). Use histograms for EDA, box plots for group comparisons, violin plots when you need both.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="11">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">11</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-viz">Visualisation</span> You plot a correlation heatmap and see r = 0.92 between two features. What do you do?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">r = 0.92 means <strong>high multicollinearity</strong>. These features carry nearly the same information. For linear models, you should <strong>drop one</strong> or use PCA to combine them — otherwise you get unstable coefficients. For tree-based models it matters less (they can handle it), but it still inflates feature importance for both. Always investigate: is one derived from the other?</div></div>
+    </div>
+
+    <div class="flashcard" data-id="12">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">12</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-linalg">Linear Algebra</span> What does matrix multiplication <code>(m×n) @ (n×p)</code> actually compute? Why must the inner dimensions match?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Each element in the result is a <strong>dot product</strong> of a row from the left matrix with a column from the right matrix. The inner dimensions (n) must match because that's the length of the vectors being dotted together. Result shape is (m×p). In a neural network: m = samples, n = input features, p = output neurons.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="13">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">13</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-linalg">Linear Algebra</span> What are eigenvalues and eigenvectors? How do they relate to PCA?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">For a matrix A, an eigenvector v satisfies <code>A·v = λ·v</code> — the matrix only <strong>scales</strong> the vector, doesn't change its direction. λ is the eigenvalue (the scale factor). In PCA: eigenvectors of the <strong>covariance matrix</strong> give the directions of maximum variance (principal components). Eigenvalues tell you <strong>how much variance</strong> each component explains. You keep the top-k components to reduce dimensions.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="14">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">14</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-linalg">Linear Algebra</span> What is the difference between L1 and L2 regularisation? When would you use each?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><strong>L1 (Lasso):</strong> penalises sum of absolute weights. Drives some weights to exactly zero → <strong>feature selection</strong>. Use when you suspect many features are irrelevant. <strong>L2 (Ridge):</strong> penalises sum of squared weights. Shrinks all weights toward zero but rarely to zero → <strong>prevents overfitting</strong> without eliminating features. Use when all features are potentially useful. <strong>ElasticNet</strong> combines both.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="15">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">15</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-stats">Statistics</span> Explain Bayes' theorem in one sentence, then give an ML example.</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">"Update your prior belief about A after observing evidence B." <code>P(A|B) = P(B|A)·P(A) / P(B)</code>. ML example: <strong>spam classifier</strong> — prior P(spam)=30%, if the word "free" appears in 80% of spam but only 10% of legit emails, then P(spam|"free") = (0.8×0.3)/(0.8×0.3 + 0.1×0.7) = 77.4%. This is exactly how Naive Bayes works.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="16">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">16</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-stats">Statistics</span> What is the Central Limit Theorem and why does it matter for ML?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">The mean of <strong>sufficiently large samples</strong> (n≥30) from ANY distribution will be approximately <strong>normally distributed</strong>. This is why: batch statistics in BatchNorm work, confidence intervals are valid, t-tests can compare model performances, and many ML assumptions about "normally distributed errors" hold even when the raw data isn't normal.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="17">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">17</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-stats">Statistics</span> Your dataset has Pearson r = 0.02 between two variables. Can you conclude there's no relationship? Why or why not?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><strong>No!</strong> Pearson r only measures <strong>linear</strong> relationships. There could be a strong <strong>non-linear</strong> relationship (e.g., quadratic, U-shaped) that Pearson completely misses. Always plot a scatter chart. Use <strong>Spearman's rank correlation</strong> for monotonic non-linear relationships, or mutual information for any type of dependency.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="18">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">18</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-stats">Statistics</span> What is entropy? Why do decision trees care about it?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>H = -Σ p·log₂(p)</code> — measures <strong>uncertainty/disorder</strong>. High entropy = unpredictable (e.g., fair coin = 1 bit). Low entropy = predictable (biased coin). Decision trees split data to <strong>maximise information gain</strong> (= parent entropy minus weighted child entropy). Each split makes subsets more "pure" (lower entropy). Cross-entropy loss in neural networks is the same concept.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="19">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">19</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-eda">EDA</span> You find a feature with 25% missing values. Walk through your decision process for handling it.</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><strong>1.</strong> Check if missingness is random or systematic (plot missing vs target). <strong>2.</strong> If the feature is important (high correlation with target), impute — use <strong>median</strong> for numeric (robust to outliers) or <strong>mode</strong> for categorical. Consider group-wise imputation (e.g., median by class). <strong>3.</strong> If unimportant or >50% missing, consider dropping. <strong>4.</strong> Create a binary <code>is_missing</code> flag — the fact that data is missing can itself be predictive.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="20">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">20</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-eda">EDA</span> Your target variable has 90% class 0 and 10% class 1. What problems does this cause, and what can you do?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">This is <strong>class imbalance</strong>. A model predicting "always 0" gets 90% accuracy but is useless. Problems: misleading accuracy, poor recall for the minority class. Solutions: <strong>1.</strong> Use metrics that handle imbalance — F1, precision, recall, ROC-AUC instead of accuracy. <strong>2.</strong> Stratified train/test splits. <strong>3.</strong> Resampling — SMOTE (oversample minority) or undersample majority. <strong>4.</strong> Class weights in the model. <strong>5.</strong> Threshold tuning on prediction probabilities.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleCard(el){
+  const card = el.parentElement;
+  card.classList.toggle('open');
+  updateScore();
+}
+function updateScore(){
+  const opened = document.querySelectorAll('.flashcard.open').length;
+  document.getElementById('score-display').textContent = opened;
+}
+</script>
+
+<!-- ═══ NEXT WEEK PREVIEW ═══ -->
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-top:3rem;text-align:center">
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--accent);letter-spacing:2px;margin-bottom:0.5rem">COMING NEXT</p>
+  <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:0.5rem">Week 2 — Core ML Concepts</h3>
+  <p style="color:var(--text2)">Supervised vs unsupervised learning, bias-variance tradeoff, evaluation metrics, linear regression from scratch, logistic regression from scratch.</p>
+</div>
+
+</div>
+
+<footer>
+  <p>Built by <a href="https://praveent27.github.io" target="_blank">Praveen Kumar Thumati</a> · AI Engineer Lab · <a href="../../index.html">← Home</a></p>
+</footer>
+
+</body>
+</html>
