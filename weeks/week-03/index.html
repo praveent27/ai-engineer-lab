@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 3 — Feature Engineering & Data Prep | AI Engineer Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;600&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17;--surface:#111827;--surface2:#1a2332;--border:#1e293b;
+  --text:#e2e8f0;--text2:#94a3b8;--accent:#f59e0b;--accent2:#fbbf24;
+  --blue:#3b82f6;--green:#22c55e;--purple:#a78bfa;--red:#ef4444;
+  --cyan:#22d3ee;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,23,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0.8rem 2rem}
+nav .inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+nav .logo{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--accent);text-decoration:none}
+nav .back{color:var(--text2);text-decoration:none;font-size:0.85rem;transition:color 0.3s}
+nav .back:hover{color:var(--accent)}
+
+.container{max-width:900px;margin:0 auto;padding:2rem}
+
+/* ── HEADER ── */
+.week-header{padding:3rem 0;border-bottom:1px solid var(--border);margin-bottom:3rem}
+.week-label{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:0.5rem}
+.week-header h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3rem);margin-bottom:1rem}
+.week-header .desc{color:var(--text2);font-size:1.05rem;max-width:700px;margin-bottom:1.5rem}
+.meta-row{display:flex;gap:1.5rem;flex-wrap:wrap}
+.meta-item{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--text2);background:var(--surface);padding:0.4rem 0.8rem;border-radius:5px;border:1px solid var(--border)}
+.meta-item span{color:var(--accent)}
+
+/* ── TOC ── */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem 2rem;margin-bottom:3rem}
+.toc h3{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace;letter-spacing:1px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.4rem}
+.toc a{color:var(--text2);text-decoration:none;font-size:0.88rem;padding:0.3rem 0;display:flex;align-items:center;gap:0.5rem;transition:color 0.3s}
+.toc a:hover{color:var(--accent)}
+.toc a .day-tag{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--cyan);min-width:35px}
+
+/* ── DAY SECTIONS ── */
+.day-section{margin-bottom:4rem;scroll-margin-top:80px}
+.day-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.8rem;border-bottom:2px solid var(--border)}
+.day-badge{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--bg);background:var(--accent);padding:0.3rem 0.7rem;border-radius:4px;font-weight:600;white-space:nowrap}
+.day-badge.rest{background:var(--text2)}
+.day-header h2{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.day-header .time{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--text2);margin-left:auto}
+
+.day-content p{margin-bottom:1rem;color:var(--text2)}
+.day-content strong{color:var(--text)}
+
+/* ── CONCEPT CARDS ── */
+.concepts{display:grid;gap:0.8rem;margin:1.5rem 0}
+.concept{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;transition:border-color 0.3s}
+.concept:hover{border-color:var(--blue)}
+.concept h4{font-size:0.95rem;color:var(--blue);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.5rem}
+.concept p{font-size:0.88rem;color:var(--text2);margin:0}
+.concept code{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--surface2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--cyan)}
+
+/* ── CODE BLOCKS ── */
+pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;overflow-x:auto;margin:1rem 0;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;line-height:1.7;color:var(--cyan)}
+
+/* ── KEY TAKEAWAYS ── */
+.takeaways{background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(59,130,246,0.08));border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:1.5rem 2rem;margin:1.5rem 0}
+.takeaways h3{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace}
+.takeaways ul{list-style:none;padding:0}
+.takeaways li{padding:0.3rem 0;font-size:0.9rem;color:var(--text);padding-left:1.5rem;position:relative}
+.takeaways li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+
+/* ── CHEAT SHEET ── */
+.cheatsheet{margin:2rem 0}
+.cheatsheet h3{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:1rem;color:var(--accent)}
+.cheat-table{width:100%;border-collapse:collapse;font-size:0.85rem}
+.cheat-table th{text-align:left;padding:0.6rem 1rem;background:var(--surface2);color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:0.75rem;letter-spacing:1px;border-bottom:2px solid var(--border)}
+.cheat-table td{padding:0.5rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.cheat-table td:first-child{color:var(--text);font-weight:600;white-space:nowrap}
+.cheat-table td:nth-child(2){font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--cyan)}
+.cheat-table td:last-child{color:var(--text2)}
+.cheat-table tr:hover{background:rgba(59,130,246,0.05)}
+
+/* ── NOTEBOOK LINKS ── */
+.notebook-link{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);padding:0.5rem 1rem;border-radius:6px;text-decoration:none;color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;transition:all 0.3s;margin:0.3rem 0.3rem 0.3rem 0}
+.notebook-link:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+/* ── ML MAPPING ── */
+.ml-map{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1.5rem 0}
+.ml-map h4{font-size:0.85rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace}
+.ml-map-item{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;padding:0.4rem 0;font-size:0.85rem}
+.ml-map-item .arrow{color:var(--accent)}
+.ml-map-item .left{color:var(--text2);text-align:right}
+.ml-map-item .right{color:var(--cyan)}
+
+/* ── SUMMARY BOX ── */
+.summary-box{background:var(--surface2);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:1.5rem;margin:2rem 0}
+.summary-box h3{font-size:1rem;color:var(--green);margin-bottom:0.5rem}
+.summary-box p{font-size:0.9rem;color:var(--text2)}
+
+/* ── WARNING BOX ── */
+.warning-box{background:var(--surface2);border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:1.5rem;margin:1.5rem 0}
+.warning-box h3{font-size:1rem;color:var(--red);margin-bottom:0.5rem}
+.warning-box p{font-size:0.9rem;color:var(--text2)}
+
+/* ── INFO BOX ── */
+.info-box{background:var(--surface2);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:1.5rem;margin:1.5rem 0}
+.info-box h3{font-size:1rem;color:var(--blue);margin-bottom:0.5rem}
+.info-box p{font-size:0.9rem;color:var(--text2)}
+
+/* ── COMPARISON TABLE ── */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+@media(max-width:600px){.compare-grid{grid-template-columns:1fr}}
+.compare-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem}
+.compare-card h5{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;margin-bottom:0.8rem;letter-spacing:1px}
+.compare-card ul{list-style:none;padding:0}
+.compare-card li{font-size:0.85rem;color:var(--text2);padding:0.25rem 0;padding-left:1.2rem;position:relative}
+.compare-card li::before{content:'·';position:absolute;left:0;color:var(--accent)}
+
+/* ── FLASHCARDS ── */
+.flashcard-section{margin:4rem 0;scroll-margin-top:80px}
+.flashcard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.flashcard-header h3{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.flashcard-score{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--text2);background:var(--surface);padding:0.5rem 1rem;border-radius:6px;border:1px solid var(--border)}
+.flashcard-score span{color:var(--green);font-weight:600}
+.flashcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:1rem}
+@media(max-width:500px){.flashcard-grid{grid-template-columns:1fr}}
+.flashcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.3s}
+.flashcard:hover{border-color:rgba(245,158,11,0.4)}
+.flashcard-q{padding:1.2rem 1.5rem;cursor:pointer;display:flex;align-items:flex-start;gap:0.8rem;user-select:none;-webkit-user-select:none}
+.flashcard-q:hover{background:rgba(245,158,11,0.03)}
+.flashcard-num{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--accent);background:rgba(245,158,11,0.1);padding:0.25rem 0.5rem;border-radius:4px;white-space:nowrap;min-width:28px;text-align:center;margin-top:2px}
+.flashcard-text{font-size:0.92rem;color:var(--text);line-height:1.5;flex:1}
+.flashcard-toggle{color:var(--text2);font-size:0.8rem;margin-top:2px;transition:transform 0.3s;flex-shrink:0}
+.flashcard.open .flashcard-toggle{transform:rotate(180deg)}
+.flashcard-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s ease}
+.flashcard.open .flashcard-a{max-height:500px}
+.flashcard-a-inner{padding:0 1.5rem 1.2rem 3.5rem;font-size:0.88rem;color:var(--text2);line-height:1.6;border-top:1px dashed var(--border)}
+.flashcard-a-inner{padding-top:1rem}
+.flashcard-a-inner code{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--surface2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--cyan)}
+.flashcard-a-inner strong{color:var(--text)}
+.flashcard-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;padding:0.15rem 0.45rem;border-radius:3px;margin-right:0.3rem}
+.tag-missing{background:rgba(239,68,68,0.15);color:var(--red)}
+.tag-encoding{background:rgba(59,130,246,0.15);color:var(--blue)}
+.tag-scaling{background:rgba(34,211,238,0.15);color:var(--cyan)}
+.tag-selection{background:rgba(34,197,94,0.15);color:var(--green)}
+.tag-pca{background:rgba(167,139,250,0.15);color:var(--purple)}
+.tag-pipeline{background:rgba(245,158,11,0.15);color:var(--accent)}
+
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;margin-top:4rem}
+footer p{color:var(--text2);font-size:0.8rem}
+footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:768px){
+  .day-header{flex-wrap:wrap}
+  .day-header .time{margin-left:0;width:100%}
+  .meta-row{gap:0.5rem}
+  .ml-map-item{grid-template-columns:1fr;gap:0.2rem}
+  .ml-map-item .left{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a href="../../index.html" class="logo">AI Lab</a>
+    <a href="../../index.html#weeks" class="back">← Back to All Weeks</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══ HEADER ═══ -->
+<div class="week-header">
+  <div class="week-label">PHASE 1 · WEEK 03</div>
+  <h1>Feature Engineering & Data Prep</h1>
+  <p class="desc">Raw data never goes straight into a model. This week covers the crucial transformation layer: handling missing data, encoding categories, scaling features, selecting what matters, reducing dimensionality, and wiring it all into a production-grade scikit-learn Pipeline.</p>
+  <div class="meta-row">
+    <div class="meta-item"><span>6</span> Study Days</div>
+    <div class="meta-item"><span>~14h</span> Total</div>
+    <div class="meta-item"><span>7</span> Notebooks</div>
+    <div class="meta-item"><span>1</span> Pipeline Project</div>
+    <div class="meta-item">Type: <span>Generic AI</span></div>
+  </div>
+</div>
+
+<!-- ═══ TOC ═══ -->
+<div class="toc">
+  <h3>THIS WEEK</h3>
+  <div class="toc-grid">
+    <a href="#day1"><span class="day-tag">MON</span> Handling Missing Data</a>
+    <a href="#day2"><span class="day-tag">TUE</span> Categorical Encoding</a>
+    <a href="#day3"><span class="day-tag">WED</span> Feature Scaling</a>
+    <a href="#day4"><span class="day-tag">THU</span> Feature Selection</a>
+    <a href="#day5"><span class="day-tag">FRI</span> Rest Day</a>
+    <a href="#day6"><span class="day-tag">SAT</span> Dimensionality Reduction</a>
+    <a href="#day7"><span class="day-tag">SUN</span> End-to-End Pipeline Project</a>
+    <a href="#cheatsheet"><span class="day-tag">REF</span> Cheat Sheet</a>
+    <a href="#flashcards"><span class="day-tag">🧠</span> Self-Assessment (20 cards)</a>
+  </div>
+</div>
+
+<!-- ═══ DAY 1 ═══ -->
+<div class="day-section" id="day1">
+  <div class="day-header">
+    <span class="day-badge">MON</span>
+    <h2>Handling Missing Data</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Real-world datasets always have missing values. How you handle them determines whether your model learns signal or noise. Deleting rows throws away information. Imputing wrong introduces bias. Getting this step right is often the single largest leverage point in a feature engineering pipeline.</p>
+
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day1_Handling_Missing_Data.ipynb')">📓 Day1_Handling_Missing_Data.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>🔍 MCAR / MAR / MNAR — The Three Types of Missingness</h4>
+        <p><strong>MCAR</strong> (Missing Completely At Random): probability of missing is unrelated to any value — e.g., random sensor dropout. Safe to delete rows or do simple imputation. <strong>MAR</strong> (Missing At Random): probability depends on observed data — e.g., older patients skip a survey question. Impute using other features. <strong>MNAR</strong> (Missing Not At Random): probability depends on the missing value itself — e.g., high-income earners skip the income field. Hardest to handle; requires domain knowledge or multiple imputation.</p>
+      </div>
+      <div class="concept">
+        <h4>📊 Detecting and Profiling Missingness</h4>
+        <p><code>df.isnull().sum()</code> counts per-column. <code>df.isnull().mean() * 100</code> gives percentages. <code>msno.matrix(df)</code> (missingno library) visualises patterns across rows and columns — look for correlated missingness (two columns always missing together suggests MNAR). Always build a missing % report before imputing anything.</p>
+      </div>
+      <div class="concept">
+        <h4>🩹 Simple Imputation Strategies</h4>
+        <p><strong>Numeric — mean:</strong> use when distribution is approximately normal and few values are missing. <strong>Numeric — median:</strong> prefer for skewed distributions or when outliers are present (median is robust). <strong>Categorical — mode:</strong> fill with the most frequent category. <strong>Forward/Backward fill:</strong> for time-series data where the previous value is a good estimate. Use <code>SimpleImputer(strategy='median')</code> in scikit-learn.</p>
+      </div>
+      <div class="concept">
+        <h4>🤖 Advanced: KNN & Iterative Imputation</h4>
+        <p><code>KNNImputer(n_neighbors=5)</code> fills each missing value using the mean of k nearest complete neighbours. Captures feature correlations. <code>IterativeImputer</code> (MICE — Multiple Imputation by Chained Equations) models each feature with missing values as a function of all others — iteratively refines estimates. More accurate but slower. Use for datasets where missingness is moderate (5–40% of values).</p>
+      </div>
+      <div class="concept">
+        <h4>🚩 Missing Indicator Features</h4>
+        <p>Adding a binary column <code>feature_was_missing</code> (1 if original was NaN, 0 otherwise) lets the model learn that missingness itself carries signal. When MNAR or MAR, the model can pick up that absence of a value is predictive. Always pair with imputation — don't just add indicators. In scikit-learn: <code>SimpleImputer(add_indicator=True)</code>.</p>
+      </div>
+    </div>
+
+    <div class="ml-map">
+      <h4>IMPUTATION STRATEGY DECISION GUIDE</h4>
+      <div class="ml-map-item"><span class="left">Numeric, normal dist, &lt;5% missing</span><span class="arrow">→</span><span class="right">Mean imputation</span></div>
+      <div class="ml-map-item"><span class="left">Numeric, skewed / outliers</span><span class="arrow">→</span><span class="right">Median imputation</span></div>
+      <div class="ml-map-item"><span class="left">Categorical</span><span class="arrow">→</span><span class="right">Mode imputation</span></div>
+      <div class="ml-map-item"><span class="left">Time series</span><span class="arrow">→</span><span class="right">Forward fill (ffill)</span></div>
+      <div class="ml-map-item"><span class="left">Features correlated, moderate missing</span><span class="arrow">→</span><span class="right">KNNImputer</span></div>
+      <div class="ml-map-item"><span class="left">Complex dependencies, &lt;40% missing</span><span class="arrow">→</span><span class="right">IterativeImputer (MICE)</span></div>
+      <div class="ml-map-item"><span class="left">Missingness carries signal (MNAR)</span><span class="arrow">→</span><span class="right">add_indicator=True</span></div>
+    </div>
+
+    <pre>from sklearn.impute import SimpleImputer, KNNImputer, IterativeImputer
+import pandas as pd
+import numpy as np
+
+# Profile missingness
+missing_report = pd.DataFrame({
+    'count': df.isnull().sum(),
+    'pct': df.isnull().mean() * 100
+}).sort_values('pct', ascending=False)
+
+# Simple imputation
+num_imputer = SimpleImputer(strategy='median', add_indicator=True)
+cat_imputer = SimpleImputer(strategy='most_frequent')
+
+# KNN imputation (captures correlations)
+knn_imp = KNNImputer(n_neighbors=5)
+
+# MICE — iterative imputation
+mice_imp = IterativeImputer(max_iter=10, random_state=42)</pre>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Always understand <strong>why</strong> data is missing before deciding how to handle it — strategy depends on missingness mechanism (MCAR/MAR/MNAR).</li>
+        <li>Use <strong>median over mean</strong> for numeric imputation unless you've verified the feature is symmetric — median is robust to outliers.</li>
+        <li>Never impute on the full dataset before train/test split — you'll leak test statistics into training. Fit imputers on training data only, then transform both.</li>
+        <li><strong>Missing indicator columns</strong> are free information — add them whenever missingness could be predictive.</li>
+        <li>Dropping rows is rarely a good strategy — unless the feature is completely missing for that row and cannot be imputed.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 2 ═══ -->
+<div class="day-section" id="day2">
+  <div class="day-header">
+    <span class="day-badge">TUE</span>
+    <h2>Categorical Encoding</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Most real datasets have categorical columns — city names, product categories, gender. ML models only understand numbers. The encoding strategy you choose dramatically changes what the model learns. Wrong encoding can create false ordinal relationships, explode dimensionality, or cause target leakage.</p>
+
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day2_Categorical_Encoding.ipynb')">📓 Day2_Categorical_Encoding.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>🔢 Ordinal Encoding — When Order Exists</h4>
+        <p>Use when categories have a natural order: <em>cold &lt; warm &lt; hot</em>, or <em>low &lt; medium &lt; high</em>. <code>OrdinalEncoder(categories=[['low','medium','high']])</code> maps to integers 0, 1, 2. <strong>Never</strong> use this for nominal categories (like city names) — it implies an ordering that doesn't exist and will mislead the model.</p>
+      </div>
+      <div class="concept">
+        <h4>🔥 One-Hot Encoding — Nominal, Low Cardinality</h4>
+        <p>Creates one binary column per category: no ordinal assumption. Best for nominal features with few unique values (&lt;15 categories). <code>OneHotEncoder(drop='first', sparse_output=False)</code> — dropping one column prevents multicollinearity (the dummy variable trap). Watch out for <strong>cardinality explosion</strong>: a 1000-category feature creates 999 columns.</p>
+      </div>
+      <div class="concept">
+        <h4>📉 Target Encoding — High Cardinality</h4>
+        <p>Replace each category with the mean of the target variable within that category. E.g., city "London" → mean house price in London. Extremely powerful for tree models. <strong>Risk: target leakage.</strong> Always use K-fold cross-encoding (encode training fold using out-of-fold statistics). <code>category_encoders.TargetEncoder</code> handles this. Never fit target encoder on full training data.</p>
+      </div>
+      <div class="concept">
+        <h4>🧮 Frequency / Count Encoding</h4>
+        <p>Replace each category with how often it appears in the dataset. Useful for high-cardinality features without the leakage risk of target encoding. <code>df['city_freq'] = df['city'].map(df['city'].value_counts())</code>. Preserves signal about rare vs common categories. Works well with tree-based models.</p>
+      </div>
+      <div class="concept">
+        <h4>🏷️ Binary & Hash Encoding</h4>
+        <p><strong>Binary encoding:</strong> converts integer ordinal code to binary digits — fewer columns than OHE. Useful for medium cardinality (15–100 categories). <strong>Hash encoding:</strong> uses a hash function to map categories to a fixed number of columns. Handles new categories at inference time (OHE can't). Risk of hash collisions. Both from <code>category_encoders</code> library.</p>
+      </div>
+    </div>
+
+    <div class="ml-map">
+      <h4>ENCODING DECISION MATRIX</h4>
+      <div class="ml-map-item"><span class="left">Has natural order (size, grade)</span><span class="arrow">→</span><span class="right">OrdinalEncoder</span></div>
+      <div class="ml-map-item"><span class="left">Nominal, &lt;15 categories</span><span class="arrow">→</span><span class="right">OneHotEncoder(drop='first')</span></div>
+      <div class="ml-map-item"><span class="left">Nominal, 15–100 categories</span><span class="arrow">→</span><span class="right">BinaryEncoder</span></div>
+      <div class="ml-map-item"><span class="left">High cardinality (&gt;100) + regression/trees</span><span class="arrow">→</span><span class="right">TargetEncoder (cross-fold)</span></div>
+      <div class="ml-map-item"><span class="left">High cardinality, avoid leakage</span><span class="arrow">→</span><span class="right">FrequencyEncoder</span></div>
+      <div class="ml-map-item"><span class="left">Unknown categories at inference</span><span class="arrow">→</span><span class="right">HashingEncoder</span></div>
+    </div>
+
+    <pre>from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder
+import category_encoders as ce
+
+# Ordinal: explicitly define category order
+oe = OrdinalEncoder(categories=[['low', 'medium', 'high']])
+X[['size_enc']] = oe.fit_transform(X[['size']])
+
+# One-Hot: nominal, low cardinality
+ohe = OneHotEncoder(drop='first', sparse_output=False, handle_unknown='ignore')
+X_ohe = ohe.fit_transform(X[['colour']])
+
+# Target encoding (cross-validated to avoid leakage)
+te = ce.TargetEncoder(cols=['city'], smoothing=1.0)
+X['city_enc'] = te.fit_transform(X['city'], y)
+
+# Frequency encoding (no leakage)
+freq_map = X_train['city'].value_counts().to_dict()
+X['city_freq'] = X['city'].map(freq_map).fillna(0)</pre>
+
+    <div class="warning-box">
+      <h3>Common Trap: The Dummy Variable Trap</h3>
+      <p>One-hot encoding 3 categories creates 3 columns that sum to 1 — perfect multicollinearity. Always use <code>drop='first'</code> or <code>drop='if_binary'</code> with linear models. Tree-based models are immune (they don't rely on matrix inversion), but dropping first is still good practice.</p>
+    </div>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Ordinal encoding for ordered categories, OHE for nominal low-cardinality — never swap these.</li>
+        <li>Target encoding is powerful but leaks if not done with cross-validation — always use K-fold encoding in production.</li>
+        <li>For high-cardinality features (&gt;100 unique values), OHE creates too many columns — use frequency or target encoding.</li>
+        <li>Always handle unknown categories: <code>handle_unknown='ignore'</code> in OHE, else inference on new categories will crash.</li>
+        <li>Fit encoders only on training data. Never fit on the full dataset.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 3 ═══ -->
+<div class="day-section" id="day3">
+  <div class="day-header">
+    <span class="day-badge">WED</span>
+    <h2>Feature Scaling & Normalisation</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Many algorithms (linear models, SVMs, KNN, neural networks, PCA) are sensitive to feature magnitude. A salary column in thousands next to an age column in tens creates massive gradient imbalances. Scaling ensures all features contribute equally to distance calculations and gradient updates.</p>
+
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day3_Feature_Scaling.ipynb')">📓 Day3_Feature_Scaling.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>📏 StandardScaler (Z-score Normalisation)</h4>
+        <p><code>z = (x - μ) / σ</code> — transforms data to have <strong>mean=0, std=1</strong>. Values typically fall in [-3, 3]. Best for: linear regression, logistic regression, SVMs, neural networks, PCA. Assumes features are approximately Gaussian. <strong>Not robust to outliers</strong> — a single extreme value shifts the mean and inflates std.</p>
+      </div>
+      <div class="concept">
+        <h4>📐 MinMaxScaler (Min-Max Normalisation)</h4>
+        <p><code>x_scaled = (x - min) / (max - min)</code> — maps values to [0, 1] (or custom range). Use when you need bounded output (e.g., for neural networks with sigmoid/tanh activation, or image pixel values). <strong>Very sensitive to outliers</strong> — one extreme value compresses everything else to near zero.</p>
+      </div>
+      <div class="concept">
+        <h4>💪 RobustScaler — Outlier-Resistant</h4>
+        <p><code>x_scaled = (x - median) / IQR</code> — uses median and interquartile range instead of mean and std. <strong>Robust to outliers</strong> — extreme values don't distort the scale. Ideal for features with heavy tails or known outliers (income, property prices, transaction amounts). Output is not bounded but typically in [-3, 3] for most values.</p>
+      </div>
+      <div class="concept">
+        <h4>📊 Normalizer — Row-Wise Scaling</h4>
+        <p>Unlike others (which scale columns), <code>Normalizer</code> scales each <strong>row</strong> to unit norm. Each sample vector has L2-norm = 1. Use when the magnitude of an individual sample doesn't matter but the direction does — text TF-IDF vectors, user behaviour vectors for cosine similarity search.</p>
+      </div>
+      <div class="concept">
+        <h4>📈 Power Transforms — Fixing Skewed Distributions</h4>
+        <p><code>PowerTransformer(method='yeo-johnson')</code> applies a non-linear transformation to make distributions more Gaussian. The <strong>Yeo-Johnson</strong> method works for both positive and negative values. <strong>Box-Cox</strong> requires strictly positive values. Use before StandardScaler on skewed features (income, prices, counts). <code>QuantileTransformer(output_distribution='normal')</code> is an alternative that maps to normal by rank.</p>
+      </div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h5 style="color:var(--green)">SCALE-SENSITIVE ALGORITHMS</h5>
+        <ul>
+          <li>Linear / Logistic Regression</li>
+          <li>Support Vector Machines (SVM)</li>
+          <li>K-Nearest Neighbours (KNN)</li>
+          <li>Principal Component Analysis (PCA)</li>
+          <li>Neural Networks</li>
+          <li>Gradient descent in general</li>
+          <li>K-Means Clustering</li>
+          <li>Ridge / Lasso Regression</li>
+        </ul>
+      </div>
+      <div class="compare-card">
+        <h5 style="color:var(--blue)">SCALE-INVARIANT ALGORITHMS</h5>
+        <ul>
+          <li>Decision Trees</li>
+          <li>Random Forest</li>
+          <li>Gradient Boosting (XGBoost, LightGBM)</li>
+          <li>Naive Bayes</li>
+          <li>Tree-based models in general</li>
+        </ul>
+      </div>
+    </div>
+
+    <pre>from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
+from sklearn.preprocessing import PowerTransformer, QuantileTransformer
+
+# Standard: for Gaussian-ish features, linear/SVM/NN
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_train)
+
+# MinMax: for bounded output [0,1]
+mm_scaler = MinMaxScaler(feature_range=(0, 1))
+
+# Robust: when you have outliers
+rb_scaler = RobustScaler()  # uses median + IQR
+
+# Fix skewness before scaling
+pt = PowerTransformer(method='yeo-johnson')
+X_transformed = pt.fit_transform(X[['income', 'price']])
+
+# ALWAYS fit on train, transform train AND test
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)  # NOT fit_transform!</pre>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Tree-based models (Random Forest, XGBoost) don't need scaling — they split on thresholds, not magnitudes.</li>
+        <li><strong>Never fit_transform on test data</strong> — always fit on training data and only transform test data.</li>
+        <li>StandardScaler first, RobustScaler when outliers are present, MinMaxScaler when you need [0,1] bounds.</li>
+        <li>Apply <code>PowerTransformer</code> to fix skewed distributions before StandardScaler for best results with linear models.</li>
+        <li>Check skewness with <code>df.skew()</code> — values beyond ±1 are moderately skewed, beyond ±2 severely skewed.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 4 ═══ -->
+<div class="day-section" id="day4">
+  <div class="day-header">
+    <span class="day-badge">THU</span>
+    <h2>Feature Selection</h2>
+    <span class="time">1.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> More features is not always better. Irrelevant features add noise, slow training, cause overfitting, and make models harder to interpret. The <em>curse of dimensionality</em> means that in high-dimensional spaces, distances become meaningless and models struggle. Selecting the right features is often more impactful than choosing the right algorithm.</p>
+
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day4_Feature_Selection.ipynb')">📓 Day4_Feature_Selection.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>📊 Filter Methods — Statistics-Based</h4>
+        <p>Evaluate each feature independently of the model. Fast and cheap. <strong>Variance threshold:</strong> <code>VarianceThreshold(threshold=0.01)</code> removes near-constant features (they carry no signal). <strong>Correlation filter:</strong> remove one of any pair with |correlation| &gt; 0.95 (they're redundant). <strong>Univariate tests:</strong> <code>SelectKBest(f_classif, k=20)</code> for classification, <code>SelectKBest(f_regression, k=20)</code> for regression. Use chi-squared for categorical features vs. categorical target.</p>
+      </div>
+      <div class="concept">
+        <h4>🤖 Wrapper Methods — Model-Based Search</h4>
+        <p>Use a model's performance to evaluate feature subsets. <strong>RFE (Recursive Feature Elimination):</strong> <code>RFE(estimator=LogisticRegression(), n_features_to_select=10)</code> — iteratively removes the least important feature. Computationally expensive but accurate. <strong>RFECV:</strong> same but cross-validated — automatically finds the optimal number of features. Use for datasets with &lt;1000 features.</p>
+      </div>
+      <div class="concept">
+        <h4>🌲 Embedded Methods — Feature Importance</h4>
+        <p>Feature selection built into the model during training. <strong>L1 (Lasso) regularisation</strong> drives unimportant weights to zero — features with zero coefficients are eliminated. <strong>Tree feature importance:</strong> <code>model.feature_importances_</code> in Random Forest or XGBoost measures how much each feature reduces impurity. <code>SelectFromModel(threshold='mean')</code> keeps features above threshold. Most efficient approach for tree-based models.</p>
+      </div>
+      <div class="concept">
+        <h4>🎯 Mutual Information</h4>
+        <p><code>mutual_info_classif</code> / <code>mutual_info_regression</code> measures non-linear dependency between feature and target (unlike correlation which only captures linear). Returns I(X; Y) — how much knowing X reduces uncertainty about Y. Handles both linear and non-linear relationships. Use via <code>SelectKBest(mutual_info_classif, k=20)</code>.</p>
+      </div>
+      <div class="concept">
+        <h4>🔗 Removing Correlated Features</h4>
+        <p>Highly correlated features add redundancy without new information — they can destabilise linear model coefficients. Compute correlation matrix: <code>df.corr().abs()</code>. Find upper triangle pairs above threshold. Drop one from each high-correlation pair. For feature groups, use domain knowledge to decide which to keep. In tree models correlation is less harmful but still reduces interpretability.</p>
+      </div>
+    </div>
+
+    <pre>from sklearn.feature_selection import (
+    VarianceThreshold, SelectKBest, f_classif,
+    mutual_info_classif, RFE, SelectFromModel, RFECV
+)
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+
+# 1. Remove near-constant features
+sel = VarianceThreshold(threshold=0.01)
+X_var = sel.fit_transform(X)
+
+# 2. Remove highly correlated features
+corr = pd.DataFrame(X).corr().abs()
+upper = corr.where(np.triu(np.ones(corr.shape), k=1).astype(bool))
+to_drop = [col for col in upper.columns if any(upper[col] > 0.95)]
+X_uncorr = pd.DataFrame(X).drop(columns=to_drop)
+
+# 3. Univariate selection
+selector = SelectKBest(mutual_info_classif, k=20)
+X_best = selector.fit_transform(X_train, y_train)
+
+# 4. Tree feature importance
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+feat_sel = SelectFromModel(rf, threshold='mean', prefit=True)
+X_important = feat_sel.transform(X_test)
+
+# 5. RFE with cross-validation
+rfecv = RFECV(estimator=rf, step=1, cv=5, scoring='f1')
+rfecv.fit(X_train, y_train)
+print(f"Optimal features: {rfecv.n_features_}")</pre>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li><strong>Variance threshold first</strong> — eliminates near-constant features instantly and cheaply.</li>
+        <li>Mutual information detects non-linear relationships that Pearson correlation misses — use it for complex data.</li>
+        <li>Tree feature importance is fast and model-native but can be biased toward high-cardinality features — use SHAP for deeper analysis.</li>
+        <li>Feature selection is part of the pipeline — fit selectors on training data only, apply to test.</li>
+        <li>The curse of dimensionality: KNN, SVM, and K-Means degrade badly with many irrelevant features. Feature selection is not optional for these algorithms.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 5 ═══ -->
+<div class="day-section" id="day5">
+  <div class="day-header">
+    <span class="day-badge rest">FRI</span>
+    <h2>Rest Day</h2>
+    <span class="time">Off</span>
+  </div>
+  <div class="day-content">
+    <div class="summary-box">
+      <h3>Week Checkpoint (Mon–Thu)</h3>
+      <p>By now you understand the full spectrum of preprocessing: from diagnosing missing data to encoding categories without leakage to scaling for algorithm sensitivity to ruthlessly cutting irrelevant features. Take Friday off. The pipeline project on Sunday ties all four concepts together into a deployable artefact.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 6 ═══ -->
+<div class="day-section" id="day6">
+  <div class="day-header">
+    <span class="day-badge">SAT</span>
+    <h2>Dimensionality Reduction</h2>
+    <span class="time">3.5 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> When you have hundreds or thousands of features, models overfit, training slows, and visualisation becomes impossible. Dimensionality reduction finds a lower-dimensional representation that preserves the most important structure. PCA is the workhorse for preprocessing; t-SNE and UMAP are the go-to tools for visualising high-dimensional data.</p>
+
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day6_Dimensionality_Reduction.ipynb')">📓 Day6_Dimensionality_Reduction.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>📐 PCA — Principal Component Analysis</h4>
+        <p>Finds the directions of maximum variance in the data (principal components — PCs) and projects data onto them. PCs are orthogonal (uncorrelated) and ordered by how much variance they explain. <code>PCA(n_components=0.95)</code> keeps enough components to explain 95% of variance — automatically determines k. Always standardise before PCA (it's variance-based; different feature scales will dominate). Use for: preprocessing before linear models, removing collinearity, speeding up training on high-dimensional data.</p>
+      </div>
+      <div class="concept">
+        <h4>📊 Understanding Explained Variance</h4>
+        <p><code>pca.explained_variance_ratio_</code> tells you what fraction of total variance each PC captures. Plot cumulative explained variance to pick the "elbow" — the k where adding more PCs gives diminishing returns. Common targets: 95% for preprocessing, 2D or 3D for visualisation. The scree plot (variance vs. component number) helps visually identify the cutoff.</p>
+      </div>
+      <div class="concept">
+        <h4>🎨 t-SNE — Visualising Clusters</h4>
+        <p>t-Distributed Stochastic Neighbour Embedding preserves <strong>local</strong> structure (nearby points stay nearby) at the cost of global structure. Not for preprocessing — <strong>only for visualisation</strong>. Non-deterministic; run multiple times to confirm patterns. Key hyperparameter: <code>perplexity</code> (5–50) controls the neighbourhood size. Slow on large datasets — subsample to &lt;50k points. Never use t-SNE components as model features.</p>
+      </div>
+      <div class="concept">
+        <h4>🗺️ UMAP — Modern Alternative to t-SNE</h4>
+        <p>Uniform Manifold Approximation and Projection is faster than t-SNE, better preserves global structure, and <em>can</em> be used for preprocessing (unlike t-SNE). <code>umap.UMAP(n_components=2, n_neighbors=15, min_dist=0.1)</code>. Key params: <code>n_neighbors</code> (local vs global balance) and <code>min_dist</code> (cluster tightness). Works well as a preprocessing step for downstream clustering or classification.</p>
+      </div>
+      <div class="concept">
+        <h4>🔢 Truncated SVD & Sparse Data</h4>
+        <p><code>TruncatedSVD</code> is PCA's cousin that works directly on sparse matrices (no centring required). Critical for <strong>text data</strong> (TF-IDF matrices are sparse). Also known as LSA (Latent Semantic Analysis) in NLP contexts. <code>TruncatedSVD(n_components=100)</code> reduces a 10,000-word TF-IDF matrix to 100 semantic dimensions. Used heavily in document similarity and recommendation systems.</p>
+      </div>
+    </div>
+
+    <pre>from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA, TruncatedSVD
+import matplotlib.pyplot as plt
+import numpy as np
+
+# PCA — always scale first
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_train)
+
+# Find k to explain 95% variance
+pca_full = PCA()
+pca_full.fit(X_scaled)
+cumvar = np.cumsum(pca_full.explained_variance_ratio_)
+k = np.argmax(cumvar >= 0.95) + 1
+print(f"Components for 95% variance: {k}")
+
+# Scree plot
+plt.figure(figsize=(10,4))
+plt.plot(range(1, len(cumvar)+1), cumvar * 100)
+plt.axhline(y=95, color='orange', linestyle='--', label='95% threshold')
+plt.xlabel('Number of components')
+plt.ylabel('Cumulative explained variance (%)')
+plt.title('PCA Scree Plot')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# Apply PCA with chosen k
+pca = PCA(n_components=k)
+X_pca = pca.fit_transform(X_scaled)
+
+# t-SNE for visualisation only
+from sklearn.manifold import TSNE
+tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
+X_2d = tsne.fit_transform(X_scaled[:5000])  # subsample
+
+# UMAP (install: pip install umap-learn)
+import umap
+reducer = umap.UMAP(n_components=2, n_neighbors=15, min_dist=0.1, random_state=42)
+X_umap = reducer.fit_transform(X_scaled)</pre>
+
+    <div class="ml-map">
+      <h4>DIMENSIONALITY REDUCTION SELECTION GUIDE</h4>
+      <div class="ml-map-item"><span class="left">Preprocessing for linear models</span><span class="arrow">→</span><span class="right">PCA (removes collinearity)</span></div>
+      <div class="ml-map-item"><span class="left">Visualise clusters / classes</span><span class="arrow">→</span><span class="right">t-SNE or UMAP (2D/3D only)</span></div>
+      <div class="ml-map-item"><span class="left">Sparse data (text/TF-IDF)</span><span class="arrow">→</span><span class="right">TruncatedSVD</span></div>
+      <div class="ml-map-item"><span class="left">Preprocessing + speed + interpretable</span><span class="arrow">→</span><span class="right">PCA</span></div>
+      <div class="ml-map-item"><span class="left">Non-linear manifold, preserve local</span><span class="arrow">→</span><span class="right">t-SNE (vis only)</span></div>
+      <div class="ml-map-item"><span class="left">Non-linear + can use as features</span><span class="arrow">→</span><span class="right">UMAP</span></div>
+    </div>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>Always <strong>StandardScale before PCA</strong> — PCA is variance-based, so unscaled features with large ranges will dominate the components.</li>
+        <li>t-SNE is only for visualisation — its components are not meaningful as model features. Never do <code>PCA + t-SNE → model</code>.</li>
+        <li>UMAP is faster than t-SNE, preserves global structure better, and can be used as a preprocessing step.</li>
+        <li>PCA components are interpretable via <code>pca.components_</code> — each row shows how much each original feature contributes to a PC.</li>
+        <li>TruncatedSVD is the go-to for NLP text pipelines (TF-IDF matrices cannot be centred due to sparsity).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DAY 7 ═══ -->
+<div class="day-section" id="day7">
+  <div class="day-header">
+    <span class="day-badge">SUN</span>
+    <h2>End-to-End Preprocessing Pipeline</h2>
+    <span class="time">4 hours</span>
+  </div>
+
+  <div class="day-content">
+    <p><strong>Why this matters:</strong> Applying transformations manually in the right order is error-prone and causes data leakage. Scikit-learn's <code>Pipeline</code> and <code>ColumnTransformer</code> bundle all preprocessing steps into a single object that can be fitted on training data and applied consistently to any new data — making deployment safe and reproducible.</p>
+
+    <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day7_Preprocessing_Pipeline.ipynb')">📓 Day7_Preprocessing_Pipeline.ipynb</a>
+
+    <div class="concepts">
+      <div class="concept">
+        <h4>🔧 Pipeline — Sequential Step Chaining</h4>
+        <p><code>Pipeline([('scaler', StandardScaler()), ('model', LogisticRegression())])</code> chains transformers and a final estimator. Calling <code>pipeline.fit(X_train, y_train)</code> fits all steps in sequence. <code>pipeline.predict(X_test)</code> transforms through all preprocessing steps then predicts. The key benefit: <strong>no data leakage</strong> — fit statistics come only from the data passed to that fit call. The entire pipeline can be pickled for deployment.</p>
+      </div>
+      <div class="concept">
+        <h4>🗂️ ColumnTransformer — Different Treatment per Column Type</h4>
+        <p>Numeric and categorical columns need different preprocessing. <code>ColumnTransformer</code> applies different transformers to different column subsets and concatenates results. <code>remainder='passthrough'</code> passes untouched columns through. <code>remainder='drop'</code> drops them. Use with <code>make_column_selector(dtype_include='number')</code> for automatic column type detection.</p>
+      </div>
+      <div class="concept">
+        <h4>🔗 FunctionTransformer — Custom Logic in Pipeline</h4>
+        <p><code>FunctionTransformer(np.log1p)</code> wraps any function as a scikit-learn transformer. Use for custom feature transformations that don't have a dedicated sklearn class — domain-specific computations, interaction features, date component extraction. Pairs with <code>Pipeline</code> so custom logic participates in cross-validation correctly.</p>
+      </div>
+      <div class="concept">
+        <h4>⚡ Pipeline + Cross-Validation = Safe Evaluation</h4>
+        <p>Running <code>cross_val_score(pipeline, X, y, cv=5)</code> fits the entire pipeline inside each fold — preprocessing is re-fitted on training folds and applied to validation folds. This is the only safe way to evaluate preprocessing. If you preprocess outside cross-validation, your imputer and scaler see validation data statistics, causing optimistic evaluation scores.</p>
+      </div>
+      <div class="concept">
+        <h4>🎯 GridSearchCV Over Pipeline Parameters</h4>
+        <p>Use double underscore to address pipeline step parameters: <code>{'columntransformer__num_pipeline__scaler': [StandardScaler(), RobustScaler()]}</code>. GridSearchCV can search over which scaler to use, imputation strategy, number of PCA components, and model hyperparameters — all in one cross-validated sweep. The best pipeline is automatically refitted on all training data.</p>
+      </div>
+    </div>
+
+    <pre>from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer, make_column_selector
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
+from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score, GridSearchCV
+
+# ── Define column groups
+num_features = X_train.select_dtypes(include='number').columns.tolist()
+cat_features = X_train.select_dtypes(include='object').columns.tolist()
+
+# ── Numeric pipeline
+num_pipe = Pipeline([
+    ('imputer', SimpleImputer(strategy='median', add_indicator=True)),
+    ('scaler',  StandardScaler()),
+])
+
+# ── Categorical pipeline
+cat_pipe = Pipeline([
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('encoder', OneHotEncoder(drop='first', handle_unknown='ignore',
+                              sparse_output=False)),
+])
+
+# ── Combine with ColumnTransformer
+preprocessor = ColumnTransformer([
+    ('num', num_pipe, num_features),
+    ('cat', cat_pipe, cat_features),
+], remainder='drop')
+
+# ── Full pipeline: preprocessor → optional PCA → model
+full_pipeline = Pipeline([
+    ('preprocessor', preprocessor),
+    ('pca', PCA(n_components=0.95)),          # optional step
+    ('model', RandomForestClassifier(n_estimators=100, random_state=42)),
+])
+
+# ── Safe cross-validation (preprocessing re-fitted inside each fold)
+cv_scores = cross_val_score(full_pipeline, X_train, y_train,
+                             cv=5, scoring='f1_weighted')
+print(f"CV F1: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
+
+# ── Hyperparameter search over pipeline steps
+param_grid = {
+    'preprocessor__num__imputer__strategy': ['mean', 'median'],
+    'preprocessor__num__scaler': [StandardScaler(), RobustScaler()],
+    'model__n_estimators': [100, 300],
+    'model__max_depth': [None, 10, 20],
+}
+gs = GridSearchCV(full_pipeline, param_grid, cv=5,
+                  scoring='f1_weighted', n_jobs=-1)
+gs.fit(X_train, y_train)
+print(f"Best params: {gs.best_params_}")
+
+# ── Save pipeline for deployment
+import joblib
+joblib.dump(gs.best_estimator_, 'preprocessing_pipeline.pkl')
+
+# ── Load and predict in one line
+pipe = joblib.load('preprocessing_pipeline.pkl')
+preds = pipe.predict(X_new)</pre>
+
+    <div class="info-box">
+      <h3>Data Leakage Prevention Checklist</h3>
+      <p>Fit imputers on training only → apply to test. Fit scalers on training only → apply to test. Fit encoders on training only → apply to test. Use <code>cross_val_score(pipeline, ...)</code> not <code>cross_val_score(model, preprocessed_X, ...)</code>. Never apply target encoding without K-fold cross-validation. Never compute feature statistics from the full dataset before splitting.</p>
+    </div>
+
+    <div class="takeaways">
+      <h3>KEY TAKEAWAYS</h3>
+      <ul>
+        <li>A <code>Pipeline</code> is the single most important tool in your ML engineering toolkit — it prevents leakage and makes deployment safe.</li>
+        <li>Always use <code>cross_val_score(pipeline, ...)</code> not <code>cross_val_score(model, X_preprocessed, ...)</code> — preprocessing must be inside the fold.</li>
+        <li><code>ColumnTransformer</code> handles the fact that numeric and categorical columns need different treatment.</li>
+        <li>The fitted pipeline is deployable — save with <code>joblib.dump()</code>, load with <code>joblib.load()</code>. One file, all preprocessing.</li>
+        <li><code>GridSearchCV</code> can search over preprocessing parameters too — not just model hyperparameters.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CHEAT SHEET ═══ -->
+<div id="cheatsheet" class="cheatsheet" style="scroll-margin-top:80px">
+  <h3>Week 3 Cheat Sheet — Feature Engineering & Data Prep</h3>
+
+  <p style="color:var(--text2);margin-bottom:1rem;font-size:0.9rem">Quick reference for every technique covered this week. All assume scikit-learn ≥ 1.3 unless noted.</p>
+
+  <table class="cheat-table">
+    <thead><tr><th>Technique</th><th>Code / API</th><th>When to use</th></tr></thead>
+    <tbody>
+      <tr><td>Profile missing data</td><td>df.isnull().sum() / mean()</td><td>First step every time</td></tr>
+      <tr><td>Mean imputation</td><td>SimpleImputer(strategy='mean')</td><td>Numeric, normal, &lt;5% missing</td></tr>
+      <tr><td>Median imputation</td><td>SimpleImputer(strategy='median')</td><td>Numeric, skewed or outliers</td></tr>
+      <tr><td>Mode imputation</td><td>SimpleImputer(strategy='most_frequent')</td><td>Categorical</td></tr>
+      <tr><td>Missing indicator</td><td>SimpleImputer(add_indicator=True)</td><td>When missingness is predictive</td></tr>
+      <tr><td>KNN imputation</td><td>KNNImputer(n_neighbors=5)</td><td>Correlated features, &lt;10k rows</td></tr>
+      <tr><td>MICE imputation</td><td>IterativeImputer(max_iter=10)</td><td>Complex missingness, &lt;40%</td></tr>
+      <tr><td>Ordinal encoding</td><td>OrdinalEncoder(categories=[…])</td><td>Ordered categories</td></tr>
+      <tr><td>One-hot encoding</td><td>OneHotEncoder(drop='first')</td><td>Nominal, &lt;15 categories</td></tr>
+      <tr><td>Target encoding</td><td>ce.TargetEncoder(smoothing=1.0)</td><td>High cardinality + trees</td></tr>
+      <tr><td>Frequency encoding</td><td>df['col'].value_counts().map()</td><td>High cardinality, no leakage</td></tr>
+      <tr><td>StandardScaler</td><td>StandardScaler()</td><td>Linear, SVM, NN — Gaussian features</td></tr>
+      <tr><td>MinMaxScaler</td><td>MinMaxScaler()</td><td>Bounded output needed [0,1]</td></tr>
+      <tr><td>RobustScaler</td><td>RobustScaler()</td><td>Outliers present</td></tr>
+      <tr><td>PowerTransformer</td><td>PowerTransformer('yeo-johnson')</td><td>Fix skewed distributions</td></tr>
+      <tr><td>Variance threshold</td><td>VarianceThreshold(0.01)</td><td>Remove near-constant features</td></tr>
+      <tr><td>Univariate selection</td><td>SelectKBest(mutual_info_classif, k=20)</td><td>Simple filter, any model</td></tr>
+      <tr><td>RFE</td><td>RFECV(estimator, cv=5)</td><td>Wrapper, find optimal k</td></tr>
+      <tr><td>Tree importance</td><td>SelectFromModel(rf, threshold='mean')</td><td>Tree-based models</td></tr>
+      <tr><td>PCA preprocessing</td><td>PCA(n_components=0.95)</td><td>Remove collinearity, speed up</td></tr>
+      <tr><td>PCA visualisation</td><td>PCA(n_components=2)</td><td>2D scatter of classes</td></tr>
+      <tr><td>t-SNE visualisation</td><td>TSNE(perplexity=30)</td><td>Cluster visualisation only</td></tr>
+      <tr><td>UMAP</td><td>umap.UMAP(n_neighbors=15)</td><td>Faster t-SNE, can use as features</td></tr>
+      <tr><td>TruncatedSVD</td><td>TruncatedSVD(n_components=100)</td><td>Sparse text/TF-IDF matrices</td></tr>
+      <tr><td>Full Pipeline</td><td>Pipeline([('prep', ct), ('model', clf)])</td><td>Always — prevents leakage</td></tr>
+      <tr><td>Column-wise prep</td><td>ColumnTransformer([('num', num_pipe, cols)])</td><td>Different handling per dtype</td></tr>
+      <tr><td>Safe CV</td><td>cross_val_score(pipeline, X, y)</td><td>Always — preprocessing inside fold</td></tr>
+      <tr><td>Pipeline search</td><td>GridSearchCV(pipeline, param_grid)</td><td>Tune preprocessing + model together</td></tr>
+      <tr><td>Save pipeline</td><td>joblib.dump(pipeline, 'pipe.pkl')</td><td>Production deployment</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ FLASHCARDS ═══ -->
+<div class="flashcard-section" id="flashcards">
+  <div class="flashcard-header">
+    <h3>Self-Assessment — 20 Flashcards</h3>
+    <div class="flashcard-score">Revealed: <span id="score-display">0</span> / 20</div>
+  </div>
+
+  <div class="flashcard-grid">
+
+    <div class="flashcard" data-id="1">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">01</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-missing">Missing Data</span> What are MCAR, MAR, and MNAR, and why does the distinction matter?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><strong>MCAR</strong> (Missing Completely At Random): missingness is independent of any value — safe to use simple imputation or drop rows. <strong>MAR</strong> (Missing At Random): probability of missing depends on other observed features — use model-based imputation like KNN or MICE. <strong>MNAR</strong> (Missing Not At Random): probability depends on the missing value itself — hardest case, requires domain knowledge or collecting the missing data. The distinction matters because using the wrong strategy introduces bias into your model.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="2">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">02</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-missing">Missing Data</span> Why should you never fit an imputer on the full dataset before splitting?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Fitting on the full dataset allows test-set statistics (e.g., the median) to influence the imputed values in the training set — this is <strong>data leakage</strong>. The model indirectly "sees" test data during training, producing overly optimistic evaluation metrics and poorer real-world performance. Always: split first, then <code>imputer.fit_transform(X_train)</code>, then <code>imputer.transform(X_test)</code>.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="3">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">03</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-missing">Missing Data</span> When should you add a missing indicator column alongside imputation?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Add a missing indicator when the fact that a value is missing is itself predictive of the target — i.e., when data is MAR or MNAR. For example, if high-income customers systematically skip the income field, the absence of income is informative. <code>SimpleImputer(add_indicator=True)</code> appends a binary column (<code>feature_was_missing</code>) before imputation. The model can then learn from both the imputed value and the missingness pattern.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="4">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">04</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-encoding">Encoding</span> Why does one-hot encoding require dropping one column (dummy variable trap)?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">One-hot encoding of K categories creates K columns that always sum to 1 — perfect linear dependency (multicollinearity). For linear models, this makes the feature matrix non-invertible and destabilises coefficient estimates. Dropping one column (<code>drop='first'</code>) breaks the linear dependency. Tree-based models (Random Forest, XGBoost) don't invert matrices so they're not affected, but dropping is still good practice for memory and clarity.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="5">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">05</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-encoding">Encoding</span> What is target encoding and what is the risk? How do you mitigate it?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Target encoding replaces each category with the mean of the target variable for that category (e.g., city → mean house price in that city). Very powerful for high-cardinality features. <strong>Risk:</strong> target leakage — if you compute target means on training data and then use those same samples to train the model, the model sees the target through the encoding. <strong>Mitigation:</strong> K-fold cross-encoding — for each training fold, compute the encoding from the out-of-fold rows. Use <code>category_encoders.TargetEncoder</code> or <code>sklearn.preprocessing.TargetEncoder</code> (sklearn ≥ 1.3) which handles this automatically.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="6">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">06</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-encoding">Encoding</span> When would you choose frequency encoding over one-hot encoding?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Use frequency encoding when: (1) cardinality is high (100+ unique values) — OHE would create 99+ columns, causing dimensionality explosion. (2) You want to encode rare vs. common categories as a meaningful signal. (3) You need to avoid target leakage that target encoding introduces. Frequency encoding maps each category to its count/frequency in the training data: <code>freq_map = X_train['col'].value_counts(); X['col_freq'] = X['col'].map(freq_map)</code>. Handle unseen categories with <code>.fillna(0)</code> or a small default value.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="7">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">07</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-scaling">Scaling</span> When would you choose RobustScaler over StandardScaler?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Choose <strong>RobustScaler</strong> when the feature has significant outliers. StandardScaler uses mean and std — a single extreme value shifts the mean and inflates the std, compressing all "normal" values to a very narrow range. RobustScaler uses <strong>median and IQR</strong> (interquartile range), both of which are resistant to outliers. Typical use cases: income, transaction amounts, property prices, sensor readings with known noise spikes. If you're unsure, check <code>df['col'].describe()</code> — if the max is 5+ standard deviations from the mean, use RobustScaler.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="8">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">08</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-scaling">Scaling</span> Why don't tree-based models need feature scaling?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Decision trees (and ensembles like Random Forest and XGBoost) split on threshold values: "is feature X &gt; t?". The threshold is learned from data; it doesn't matter whether X is in [0,1] or [0,10000] — the relative ordering of values is preserved under any monotonic scaling. There is no distance calculation or gradient update that would be affected by scale. Linear models and KNN use distances/dot products that are scale-sensitive, so they require scaling. Neural networks are gradient-descent-based so they also require scaling for stable convergence.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="9">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">09</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-scaling">Scaling</span> What does PowerTransformer do and when should you apply it?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>PowerTransformer(method='yeo-johnson')</code> applies a non-linear transformation that makes the distribution more Gaussian (symmetric, bell-curve-like). The Yeo-Johnson method works for any real values (including zero and negative). Box-Cox requires strictly positive values. Apply before StandardScaler when: (1) a numeric feature is highly skewed (e.g., income, prices, counts). (2) You're using a linear model — they assume Gaussian errors. Check skewness: <code>df.skew()</code> values &gt; 1.0 suggest a power transform will help.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="10">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">10</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-selection">Feature Selection</span> What is the curse of dimensionality and how does feature selection help?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">In high-dimensional spaces, all points become approximately equidistant from each other — distance loses meaning. To maintain the same data density, you need exponentially more samples as dimensions increase. Practical effects: KNN fails (can't find true neighbours), K-Means fails (centroids poorly defined), SVMs overfit. Feature selection removes irrelevant/redundant dimensions, keeping only the signal. This improves model generalisation, reduces training time, lowers memory usage, and makes models more interpretable.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="11">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">11</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-selection">Feature Selection</span> What is the difference between filter, wrapper, and embedded feature selection methods?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><strong>Filter methods</strong> evaluate features independently using statistics (variance, correlation, mutual information) — fast, model-agnostic, but ignore feature interactions. Examples: <code>VarianceThreshold</code>, <code>SelectKBest</code>. <strong>Wrapper methods</strong> use model performance to evaluate feature subsets — accurate but computationally expensive. Examples: <code>RFE</code>, <code>RFECV</code>. <strong>Embedded methods</strong> perform selection during model training — efficient and model-native. Examples: L1 regularisation (Lasso), tree feature importance, <code>SelectFromModel</code>. In practice: use filter methods first to remove obviously bad features, then embedded methods for the final selection.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="12">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">12</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-selection">Feature Selection</span> Why might mutual information be better than Pearson correlation for feature selection?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Pearson correlation measures <strong>linear</strong> relationships only. A feature can have zero correlation but a strong non-linear relationship with the target (e.g., quadratic: y = x²). Mutual information measures the total statistical dependency between two variables — it captures both linear and non-linear relationships. MI = 0 means truly independent; higher values mean stronger dependence. Use <code>mutual_info_classif</code> or <code>mutual_info_regression</code> via <code>SelectKBest</code>. Note: MI is more expensive to compute and requires enough data to estimate the joint distribution reliably.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="13">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">13</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pca">PCA</span> What are principal components and what does explained variance ratio mean?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Principal components (PCs) are the directions of maximum variance in the data — orthogonal axes along which the data varies most. PC1 captures the most variance, PC2 the second-most (orthogonal to PC1), and so on. <code>pca.explained_variance_ratio_[0]</code> = the fraction of total variance captured by PC1. <code>np.cumsum(pca.explained_variance_ratio_)</code> gives cumulative variance — plot this (scree plot) to pick how many PCs to keep. Keeping 20 PCs out of 100 features might capture 95% of variance, discarding noise in the remaining 5%.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="14">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">14</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pca">PCA</span> Why must you standardise features before applying PCA?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">PCA finds directions of maximum <strong>variance</strong>. If one feature has range [0, 10000] and another [0, 1], the large-scale feature will dominate the first principal component purely due to its scale — not because it's more informative. StandardScaling ensures all features have unit variance before PCA, so the algorithm finds directions of maximum <strong>information</strong> across all features equally. Rule: always apply <code>StandardScaler</code> immediately before <code>PCA</code> in your pipeline.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="15">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">15</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pca">PCA</span> What is the key difference between t-SNE and UMAP, and when should you use each?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><strong>t-SNE</strong>: preserves local structure (nearby points cluster), loses global structure (distances between clusters are meaningless). Non-deterministic, slow on large data, only for 2D/3D visualisation. <strong>Never use t-SNE components as model features</strong>. <strong>UMAP</strong>: faster, better preserves global structure, and can be used as a preprocessing step for downstream models. Both are great for exploring cluster structure visually. Use t-SNE when you want the best local cluster separation for a figure; use UMAP when you also want interpretable global layout or when you need to use the components downstream.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="16">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">16</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pipeline">Pipeline</span> What is the core purpose of scikit-learn's Pipeline and how does it prevent data leakage?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>Pipeline</code> chains preprocessing steps and a model into a single object. When you call <code>pipeline.fit(X_train, y_train)</code>, each step is fitted only on <code>X_train</code> and used to transform the input for the next step. When you call <code>pipeline.predict(X_test)</code>, the same transformations (using training-data statistics) are applied to <code>X_test</code> — test data never influences the transformers. When used with <code>cross_val_score(pipeline, X, y)</code>, the entire pipeline is re-fitted on each training fold — preventing test-fold statistics from leaking into training even during evaluation.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="17">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">17</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pipeline">Pipeline</span> What does ColumnTransformer do and why is it essential for real datasets?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner"><code>ColumnTransformer</code> applies different transformations to different column subsets and concatenates the results into a single matrix. Essential because real datasets have mixed types: numeric columns need imputation + scaling; categorical columns need imputation + encoding; some columns might be dropped. Without it, you'd need to manually split, transform, and rejoin arrays — error-prone. <code>remainder='passthrough'</code> lets columns not mentioned pass through unchanged. <code>make_column_selector(dtype_include='number')</code> auto-detects column types.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="18">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">18</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pipeline">Pipeline</span> How do you tune preprocessing hyperparameters with GridSearchCV on a Pipeline?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">Use double underscore (<code>__</code>) to address nested pipeline parameters: <code>step_name__parameter_name</code>. For nested structures: <code>columntransformer__num_pipeline__scaler</code>. Example param grid: <code>{'preprocessor__num__scaler': [StandardScaler(), RobustScaler()], 'model__max_depth': [5, 10, None]}</code>. <code>GridSearchCV</code> will try every combination, re-fitting the full pipeline on each training fold. This lets you jointly optimise preprocessing strategy and model hyperparameters — the best combination might be RobustScaler + shallow tree rather than StandardScaler + deep tree.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="19">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">19</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pipeline">Pipeline</span> What is the complete data leakage prevention checklist for a preprocessing pipeline?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">1. <strong>Split first</strong> — always split before any preprocessing. 2. <strong>Fit transformers on train only</strong> — <code>fit_transform(X_train)</code>, then <code>transform(X_test)</code>. 3. <strong>Use Pipeline + cross_val_score</strong> — never evaluate on pre-processed data outside a fold. 4. <strong>Target encoding</strong> — use K-fold cross-encoding; never compute means on the full training set. 5. <strong>Missing indicators</strong> — fit on train, apply to test. 6. <strong>Feature selection</strong> — fit selectors on each training fold. 7. <strong>PCA/scaling</strong> — fit on train, apply to test. Rule of thumb: if the transformer has ever "seen" any label from the test set, you have leakage.</div></div>
+    </div>
+
+    <div class="flashcard" data-id="20">
+      <div class="flashcard-q" onclick="toggleCard(this)">
+        <span class="flashcard-num">20</span>
+        <span class="flashcard-text"><span class="flashcard-tag tag-pipeline">Pipeline</span> How do you deploy a trained preprocessing pipeline to production?</span>
+        <span class="flashcard-toggle">▼</span>
+      </div>
+      <div class="flashcard-a"><div class="flashcard-a-inner">1. <strong>Save:</strong> <code>joblib.dump(pipeline, 'model.pkl')</code> — serialises all fitted transformers and the model as a single file. 2. <strong>Load:</strong> <code>pipe = joblib.load('model.pkl')</code> — restores the full pipeline with all fitted statistics (imputer medians, scaler means, encoder vocabularies, etc.). 3. <strong>Predict:</strong> <code>pipe.predict(raw_df)</code> — raw, unprocessed data goes in, predictions come out. All preprocessing happens automatically using training-time statistics. This is the gold standard for ML deployment — the pipeline handles everything from raw input to output in one call.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleCard(el){
+  const card = el.parentElement;
+  card.classList.toggle('open');
+  updateScore();
+}
+function updateScore(){
+  const opened = document.querySelectorAll('.flashcard.open').length;
+  document.getElementById('score-display').textContent = opened;
+}
+function copyNotebookPath(notebookName) {
+  const fullUrl = `https://github.com/praveent27/ai-engineer-lab/blob/main/weeks/week-03/${notebookName}`;
+  navigator.clipboard.writeText(fullUrl).then(() => {
+    const notification = document.createElement('div');
+    notification.textContent = `Copied: ${fullUrl}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--green);
+      color: var(--bg);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease-in forwards';
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
+  });
+}
+</script>
+
+<style>
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+</style>
+
+<!-- ═══ NEXT WEEK PREVIEW ═══ -->
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-top:3rem;text-align:center">
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--accent);letter-spacing:2px;margin-bottom:0.5rem">COMING NEXT</p>
+  <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:0.5rem">Week 4 — Phase 1 Capstone</h3>
+  <p style="color:var(--text2)">Scikit-learn pipelines in production, house price prediction end-to-end project, model evaluation deep-dive, and Phase 1 review.</p>
+</div>
+
+</div>
+
+<footer>
+  <p>Built by <a href="https://praveent27.github.io" target="_blank">Praveen Kumar Thumati</a> · AI Engineer Lab · <a href="../../index.html">← Home</a></p>
+</footer>
+
+</body>
+</html>
