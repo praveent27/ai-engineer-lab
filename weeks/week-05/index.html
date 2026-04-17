@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 5 — Classical ML Algorithms Part 1 | AI Engineer Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;600&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17;--surface:#111827;--surface2:#1a2332;--border:#1e293b;
+  --text:#e2e8f0;--text2:#94a3b8;--accent:#f59e0b;--accent2:#fbbf24;
+  --blue:#3b82f6;--green:#22c55e;--purple:#a78bfa;--red:#ef4444;
+  --cyan:#22d3ee;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,23,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0.8rem 2rem}
+nav .inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+nav .logo{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--accent);text-decoration:none}
+nav .back{color:var(--text2);text-decoration:none;font-size:0.85rem;transition:color 0.3s}
+nav .back:hover{color:var(--accent)}
+
+.container{max-width:900px;margin:0 auto;padding:2rem}
+
+/* ── HEADER ── */
+.week-header{padding:3rem 0;border-bottom:1px solid var(--border);margin-bottom:3rem}
+.week-label{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:0.5rem}
+.week-header h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3rem);margin-bottom:1rem}
+.week-header .desc{color:var(--text2);font-size:1.05rem;max-width:700px;margin-bottom:1.5rem}
+.meta-row{display:flex;gap:1.5rem;flex-wrap:wrap}
+.meta-item{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--text2);background:var(--surface);padding:0.4rem 0.8rem;border-radius:5px;border:1px solid var(--border)}
+.meta-item span{color:var(--accent)}
+
+/* ── TOC ── */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem 2rem;margin-bottom:3rem}
+.toc h3{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace;letter-spacing:1px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.4rem}
+.toc a{color:var(--text2);text-decoration:none;font-size:0.88rem;padding:0.3rem 0;display:flex;align-items:center;gap:0.5rem;transition:color 0.3s}
+.toc a:hover{color:var(--accent)}
+.toc a .day-tag{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--cyan);min-width:35px}
+
+/* ── DAY SECTIONS ── */
+.day-section{margin-bottom:4rem;scroll-margin-top:80px}
+.day-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.8rem;border-bottom:2px solid var(--border)}
+.day-badge{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--bg);background:var(--accent);padding:0.3rem 0.7rem;border-radius:4px;font-weight:600;white-space:nowrap}
+.day-badge.rest{background:var(--text2)}
+.day-header h2{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.day-header .time{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--text2);margin-left:auto}
+
+.day-content p{margin-bottom:1rem;color:var(--text2)}
+.day-content strong{color:var(--text)}
+
+/* ── CONCEPT CARDS ── */
+.concepts{display:grid;gap:0.8rem;margin:1.5rem 0}
+.concept{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;transition:border-color 0.3s}
+.concept:hover{border-color:var(--blue)}
+.concept h4{font-size:0.95rem;color:var(--blue);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.5rem}
+.concept p{font-size:0.88rem;color:var(--text2);margin:0}
+.concept code{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--surface2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--cyan)}
+
+/* ── CODE BLOCKS ── */
+pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;overflow-x:auto;margin:1rem 0;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;line-height:1.7;color:var(--cyan)}
+
+/* ── KEY TAKEAWAYS ── */
+.takeaways{background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(59,130,246,0.08));border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:1.5rem 2rem;margin:1.5rem 0}
+.takeaways h3{font-size:0.9rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace}
+.takeaways ul{list-style:none;padding:0}
+.takeaways li{padding:0.3rem 0;font-size:0.9rem;color:var(--text);padding-left:1.5rem;position:relative}
+.takeaways li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+
+/* ── CHEAT SHEET ── */
+.cheatsheet{margin:2rem 0}
+.cheatsheet h3{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:1rem;color:var(--accent)}
+.cheat-table{width:100%;border-collapse:collapse;font-size:0.85rem}
+.cheat-table th{text-align:left;padding:0.6rem 1rem;background:var(--surface2);color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:0.75rem;letter-spacing:1px;border-bottom:2px solid var(--border)}
+.cheat-table td{padding:0.5rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.cheat-table td:first-child{color:var(--text);font-weight:600;white-space:nowrap}
+.cheat-table td:nth-child(2){font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--cyan)}
+.cheat-table td:last-child{color:var(--text2)}
+.cheat-table tr:hover{background:rgba(59,130,246,0.05)}
+
+/* ── NOTEBOOK LINKS ── */
+.notebook-link{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);padding:0.5rem 1rem;border-radius:6px;text-decoration:none;color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;transition:all 0.3s;margin:0.3rem 0.3rem 0.3rem 0}
+.notebook-link:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+/* ── ML MAPPING ── */
+.ml-map{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1.5rem 0}
+.ml-map h4{font-size:0.85rem;color:var(--accent);margin-bottom:0.8rem;font-family:'IBM Plex Mono',monospace}
+.ml-map-item{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;padding:0.4rem 0;font-size:0.85rem}
+.ml-map-item .arrow{color:var(--accent)}
+.ml-map-item .left{color:var(--text2);text-align:right}
+.ml-map-item .right{color:var(--cyan)}
+
+/* ── SUMMARY BOX ── */
+.summary-box{background:var(--surface2);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:1.5rem;margin:2rem 0}
+.summary-box h3{font-size:1rem;color:var(--green);margin-bottom:0.5rem}
+.summary-box p{font-size:0.9rem;color:var(--text2)}
+
+/* ── FLASHCARDS ── */
+.flashcard-section{margin:4rem 0;scroll-margin-top:80px}
+.flashcard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.flashcard-header h3{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.flashcard-score{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--text2);background:var(--surface);padding:0.5rem 1rem;border-radius:6px;border:1px solid var(--border)}
+.flashcard-score span{color:var(--green);font-weight:600}
+.flashcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:1rem}
+@media(max-width:500px){.flashcard-grid{grid-template-columns:1fr}}
+.flashcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.3s}
+.flashcard:hover{border-color:rgba(245,158,11,0.4)}
+.flashcard-q{padding:1.2rem 1.5rem;cursor:pointer;display:flex;align-items:flex-start;gap:0.8rem;user-select:none;-webkit-user-select:none}
+.flashcard-q:hover{background:rgba(245,158,11,0.03)}
+.flashcard-num{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--accent);background:rgba(245,158,11,0.1);padding:0.25rem 0.5rem;border-radius:4px;white-space:nowrap;min-width:28px;text-align:center;margin-top:2px}
+.flashcard-text{font-size:0.92rem;color:var(--text);line-height:1.5;flex:1}
+.flashcard-toggle{color:var(--text2);font-size:0.8rem;margin-top:2px;transition:transform 0.3s;flex-shrink:0}
+.flashcard.open .flashcard-toggle{transform:rotate(180deg)}
+.flashcard-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s ease}
+.flashcard.open .flashcard-a{max-height:500px}
+.flashcard-a-inner{padding:0 1.5rem 1.2rem 3.5rem;font-size:0.88rem;color:var(--text2);line-height:1.6;border-top:1px dashed var(--border)}
+.flashcard-a-inner{padding-top:1rem}
+.flashcard-a-inner code{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--surface2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--cyan)}
+.flashcard-a-inner strong{color:var(--text)}
+.flashcard-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;padding:0.15rem 0.45rem;border-radius:3px;margin-right:0.3rem}
+.tag-tree{background:rgba(34,197,94,0.15);color:var(--green)}
+.tag-ensemble{background:rgba(59,130,246,0.15);color:var(--blue)}
+.tag-xgb{background:rgba(245,158,11,0.15);color:var(--accent)}
+.tag-svm{background:rgba(167,139,250,0.15);color:var(--purple)}
+.tag-knn{background:rgba(34,211,238,0.15);color:var(--cyan)}
+.tag-general{background:rgba(239,68,68,0.15);color:var(--red)}
+
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;margin-top:4rem}
+footer p{color:var(--text2);font-size:0.8rem}
+footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:768px){
+  .day-header{flex-wrap:wrap}
+  .day-header .time{margin-left:0;width:100%}
+  .meta-row{gap:0.5rem}
+  .ml-map-item{grid-template-columns:1fr;gap:0.2rem}
+  .ml-map-item .left{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a href="../../index.html" class="logo">AI Lab</a>
+    <a href="../../index.html#weeks" class="back">← Back to All Weeks</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="week-header">
+    <div class="week-label">WEEK 05 • PHASE 2</div>
+    <h1>Classical ML Algorithms — Part 1</h1>
+    <p class="desc">Decision trees, random forests, XGBoost, SVMs, and KNN. Master the workhorse algorithms that dominate real-world ML competitions and production systems. This week emphasizes interpretability, hyperparameter tuning, and when to use each algorithm.</p>
+    <div class="meta-row">
+      <div class="meta-item">Duration: <span>27 hours</span></div>
+      <div class="meta-item">Topics: <span>5 Core Algorithms</span></div>
+      <div class="meta-item">Tools: <span>Scikit-learn, XGBoost</span></div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>THIS WEEK'S TOPICS</h3>
+    <div class="toc-grid">
+      <a href="#day1"><span class="day-tag">Day 1</span> Decision Trees</a>
+      <a href="#day2"><span class="day-tag">Day 2</span> Ensemble Methods</a>
+      <a href="#day3"><span class="day-tag">Day 3</span> XGBoost</a>
+      <a href="#day4"><span class="day-tag">Day 4</span> SVMs</a>
+      <a href="#day5"><span class="day-tag">Day 5</span> Rest Day</a>
+      <a href="#day6"><span class="day-tag">Day 6</span> K-Nearest Neighbors</a>
+      <a href="#day7"><span class="day-tag">Day 7</span> Mini Project</a>
+    </div>
+  </div>
+
+  <!-- ═══ DAY 1 ═══ -->
+  <div class="day-section" id="day1">
+    <div class="day-header">
+      <span class="day-badge">MON</span>
+      <h2>Decision Trees</h2>
+      <span class="time">3 hours</span>
+    </div>
+
+    <div class="day-content">
+      <p><strong>Why this matters:</strong> Decision trees are the foundation of all ensemble methods (random forests, XGBoost, LightGBM). They're interpretable, handle mixed data types, and can capture non-linear patterns without feature scaling. Understanding tree growth and stopping criteria is essential for hyperparameter tuning.</p>
+
+      <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day1_Decision_Trees.ipynb')">📓 Day1_Decision_Trees.ipynb</a>
+
+      <div class="concepts">
+        <div class="concept">
+          <h4>🌳 Tree Growth via Information Gain</h4>
+          <p>At each node, split on the feature that minimises <strong>Gini impurity</strong> (classification) or <strong>MSE</strong> (regression). Gini = 1 - Σp² where p is class probability. Lower Gini = purer node. Trees grow greedily — each split is locally optimal, not globally optimal.</p>
+        </div>
+        <div class="concept">
+          <h4>📊 Stopping Criteria</h4>
+          <p><code>max_depth</code> = tree height. <code>min_samples_split</code> = minimum samples to split a node. <code>min_samples_leaf</code> = minimum samples in leaf node. <code>max_features</code> = features considered at each split. Shallow trees = high bias, deep trees = high variance (overfitting).</p>
+        </div>
+        <div class="concept">
+          <h4>🔍 Feature Importance</h4>
+          <p>Trees rank feature importance by how much they reduce Gini/MSE across all splits. High importance = feature used early in tree (splits many samples). This is your debugging tool — if important features are low-ranked, your data is messy or the pattern is weak.</p>
+        </div>
+        <div class="concept">
+          <h4>⚖️ ML Connection: Tree Bias-Variance Trade-off</h4>
+          <p>Shallow, pruned trees = high bias, low variance. Deep, unpruned trees = low bias, high variance. The sweet spot is found via cross-validation on <code>max_depth</code> and <code>min_samples_leaf</code>.</p>
+        </div>
+      </div>
+
+      <div class="takeaways">
+        <h3>KEY TAKEAWAYS</h3>
+        <ul>
+          <li>Trees don't need feature scaling or encoding (handle categorical natively).</li>
+          <li><code>max_depth=3–7</code> is a good starting range for individual trees. Deeper = better fit, higher variance.</li>
+          <li>Feature importance from trees is relative, not absolute — always sanity-check with domain knowledge.</li>
+          <li>Trees are prone to overfitting — always validate on a held-out test set.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DAY 2 ═══ -->
+  <div class="day-section" id="day2">
+    <div class="day-header">
+      <span class="day-badge">TUE</span>
+      <h2>Ensemble Methods: Random Forests & Bagging</h2>
+      <span class="time">3 hours</span>
+    </div>
+
+    <div class="day-content">
+      <p><strong>Why this matters:</strong> Random forests reduce tree overfitting via averaging. Bootstrap samples + random feature subsets = uncorrelated trees. Random forests are fast, require minimal tuning, and are the go-to baseline for many practitioners. They scale to large datasets and handle imbalanced classes.</p>
+
+      <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day2_Ensemble_Methods.ipynb')">📓 Day2_Ensemble_Methods.ipynb</a>
+
+      <div class="concepts">
+        <div class="concept">
+          <h4>🎲 Bootstrap Aggregating (Bagging)</h4>
+          <p>Sample n rows with replacement to create multiple training sets. Train independent trees on each. Average predictions (regression) or vote (classification). This reduces variance without increasing bias — because we're averaging uncorrelated learners. Key insight: each tree sees ~63% of the original data.</p>
+        </div>
+        <div class="concept">
+          <h4>🌲 Random Forests = Bagging + Random Features</h4>
+          <p>At each split, only consider sqrt(n_features) random features (classification) or n_features/3 (regression). This decorrelates trees further. Result: lower variance than bagging alone, and built-in feature importance ranking.</p>
+        </div>
+        <div class="concept">
+          <h4>⚙️ Key Hyperparameters</h4>
+          <p><code>n_estimators</code> = number of trees (more = better, but with diminishing returns). <code>max_depth</code> = depth per tree (usually leave None or very deep). <code>min_samples_leaf</code> = minimum samples in leaf. <code>n_jobs=-1</code> for parallel training.</p>
+        </div>
+        <div class="concept">
+          <h4>📈 Out-of-Bag (OOB) Score</h4>
+          <p>Each tree sees ~63% of data; evaluate on the held-out ~37%. OOB score ≈ CV score with zero training overhead. Quick way to estimate generalization without explicit validation split.</p>
+        </div>
+      </div>
+
+      <div class="ml-map">
+        <h4>RANDOM FOREST INTUITION</h4>
+        <div class="ml-map-item"><span class="left">Problem</span><span class="arrow">→</span><span class="right">Single tree overfits (high variance)</span></div>
+        <div class="ml-map-item"><span class="left">Solution 1</span><span class="arrow">→</span><span class="right">Average multiple trees (bagging)</span></div>
+        <div class="ml-map-item"><span class="left">Solution 2</span><span class="arrow">→</span><span class="right">Randomise features per split</span></div>
+        <div class="ml-map-item"><span class="left">Result</span><span class="arrow">→</span><span class="right">Low variance, low bias, fast</span></div>
+      </div>
+
+      <div class="takeaways">
+        <h3>KEY TAKEAWAYS</h3>
+        <ul>
+          <li>Random forests are fast, parallel, and need little tuning — they're your first baseline.</li>
+          <li><code>n_estimators</code> has diminishing returns past ~100–200 trees.</li>
+          <li>Feature importance from RF gives you a ranking of which features matter — use this for feature selection.</li>
+          <li>OOB score is essentially free CV; check that OOB ≈ test score (if not, data leakage or distribution shift).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DAY 3 ═══ -->
+  <div class="day-section" id="day3">
+    <div class="day-header">
+      <span class="day-badge">WED</span>
+      <h2>Gradient Boosting: XGBoost</h2>
+      <span class="time">3 hours</span>
+    </div>
+
+    <div class="day-content">
+      <p><strong>Why this matters:</strong> XGBoost powers 80% of Kaggle competitions. It's faster and more accurate than sklearn's GradientBoosting. It handles missing data, computes feature importance in multiple ways, and has regularisation built-in. Learning XGBoost is essential for your ML practitioner toolkit.</p>
+
+      <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day3_XGBoost.ipynb')">📓 Day3_XGBoost.ipynb</a>
+
+      <div class="concepts">
+        <div class="concept">
+          <h4>🚀 Gradient Boosting: Sequential Improvement</h4>
+          <p>Each tree fits the <strong>residuals</strong> (errors) of the previous ensemble. New predictions = old predictions + (learning_rate × new tree). This sequential focus on errors is why boosting often outperforms bagging. Regularisation is critical — without it, boosting overfits.</p>
+        </div>
+        <div class="concept">
+          <h4>🏆 XGBoost: Production-Ready Boosting</h4>
+          <p>XGBoost is optimised for speed and memory via tree pruning, column sampling, and hardware acceleration. It includes L1/L2 regularisation, custom loss functions, and built-in cross-validation. <code>xgb.train()</code> uses early stopping to prevent overfitting.</p>
+        </div>
+        <div class="concept">
+          <h4>🎯 Hyperparameter Tuning Strategy</h4>
+          <p><strong>Learning rate</strong> (eta): 0.01–0.3 (lower = slower but often better). <strong>Tree depth</strong> (max_depth): 3–8 (shallow trees work best in boosting). <strong>Regularisation</strong> (lambda, gamma): prevent overfitting. <strong>Early stopping</strong>: watch validation loss, stop if no improvement after N rounds.</p>
+        </div>
+        <div class="concept">
+          <h4>📊 Feature Importance in XGBoost</h4>
+          <p>Gain = improvement in accuracy. Cover = number of samples affected. Frequency = how often feature is used. Use Gain for feature selection; Frequency for interpretability.</p>
+        </div>
+      </div>
+
+      <div class="takeaways">
+        <h3>KEY TAKEAWAYS</h3>
+        <ul>
+          <li>Start with <code>max_depth=5, eta=0.1, n_estimators=100</code> and tune from there.</li>
+          <li>Early stopping is essential — let XGBoost find the optimal number of trees via validation set.</li>
+          <li>XGBoost handles missing values natively — no need for imputation.</li>
+          <li>Regularisation (L1/L2) is critical — without it, XGBoost overfits even faster than random forests.</li>
+          <li><code>scale_pos_weight</code> for imbalanced classification; <code>sample_weight</code> for weighted training.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DAY 4 ═══ -->
+  <div class="day-section" id="day4">
+    <div class="day-header">
+      <span class="day-badge">THU</span>
+      <h2>Support Vector Machines (SVMs)</h2>
+      <span class="time">3 hours</span>
+    </div>
+
+    <div class="day-content">
+      <p><strong>Why this matters:</strong> SVMs are geometrically intuitive and theoretically elegant. They find the maximum-margin hyperplane — the decision boundary that maximises distance to the nearest points. With non-linear kernels, SVMs can fit complex patterns. They're less popular than tree-based methods in competition settings, but essential for understanding ML fundamentals.</p>
+
+      <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day4_Support_Vector_Machines.ipynb')">📓 Day4_Support_Vector_Machines.ipynb</a>
+
+      <div class="concepts">
+        <div class="concept">
+          <h4>🎯 Maximum Margin Principle</h4>
+          <p>SVM finds a hyperplane that maximises the distance (margin) to the nearest data points on either side. Points closest to the margin are <strong>support vectors</strong>. The margin's width is inversely related to model complexity — wider margins generalise better.</p>
+        </div>
+        <div class="concept">
+          <h4>💥 Soft Margin & Regularisation (C)</h4>
+          <p>Allow some misclassification (soft margin) controlled by penalty parameter <code>C</code>. High C = strict margins (low bias, high variance). Low C = looser margins (high bias, low variance). Always scale features to [-1, 1] — SVM is distance-based.</p>
+        </div>
+        <div class="concept">
+          <h4>🔌 Kernels: Linear → Non-linear</h4>
+          <p><strong>Linear</strong>: works for linearly separable data. <strong>RBF (Radial Basis Function)</strong>: handles non-linear patterns by mapping to higher dimensions. <strong>Polynomial</strong>: fits polynomial boundaries. Start with RBF; tune <code>gamma</code> (RBF kernel width).</p>
+        </div>
+        <div class="concept">
+          <h4>⚠️ SVM Limitations</h4>
+          <p>Slow on large datasets (O(n²) training). Hard to interpret (black box for non-linear kernels). Requires feature scaling. Less memory-efficient than tree-based methods. Use for small-to-medium datasets where interpretability matters.</p>
+        </div>
+      </div>
+
+      <div class="ml-map">
+        <h4>SVM KERNEL SELECTION GUIDE</h4>
+        <div class="ml-map-item"><span class="left">Linearly separable</span><span class="arrow">→</span><span class="right">kernel='linear'</span></div>
+        <div class="ml-map-item"><span class="left">Non-linear, small data</span><span class="arrow">→</span><span class="right">kernel='rbf', tune gamma</span></div>
+        <div class="ml-map-item"><span class="left">Polynomial decision boundary</span><span class="arrow">→</span><span class="right">kernel='poly', tune degree</span></div>
+        <div class="ml-map-item"><span class="left">Large dataset</span><span class="arrow">→</span><span class="right">Use linear or tree-based instead</span></div>
+      </div>
+
+      <div class="takeaways">
+        <h3>KEY TAKEAWAYS</h3>
+        <ul>
+          <li><strong>Always scale</strong> SVM inputs with StandardScaler — it's distance-based.</li>
+          <li><code>C=1.0</code> is default; tune on test set. <code>gamma='scale'</code> is a good default for RBF.</li>
+          <li>SVM is slower than trees on large data — use for interpretability or small datasets.</li>
+          <li>For multi-class, scikit-learn uses one-vs-rest strategy (slower than trees).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DAY 5 ═══ -->
+  <div class="day-section" id="day5">
+    <div class="day-header">
+      <span class="day-badge rest">FRI</span>
+      <h2>Rest Day</h2>
+      <span class="time">0 hours</span>
+    </div>
+    <div class="day-content">
+      <p>Take the day off. If you want light reading, review the scikit-learn documentation for <code>GridSearchCV</code> and <code>RandomizedSearchCV</code> — we'll use these heavily for hyperparameter tuning next week.</p>
+    </div>
+  </div>
+
+  <!-- ═══ DAY 6 ═══ -->
+  <div class="day-section" id="day6">
+    <div class="day-header">
+      <span class="day-badge">SAT</span>
+      <h2>K-Nearest Neighbors & Distance Metrics</h2>
+      <span class="time">3 hours</span>
+    </div>
+
+    <div class="day-content">
+      <p><strong>Why this matters:</strong> KNN is simple but powerful for small datasets and non-parametric learning. It's also the foundation for many anomaly detection and recommendation systems. Understanding distance metrics (Euclidean, Manhattan, cosine) is essential for vector search and RAG pipelines.</p>
+
+      <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day6_KNN_Distance_Metrics.ipynb')">📓 Day6_KNN_Distance_Metrics.ipynb</a>
+
+      <div class="concepts">
+        <div class="concept">
+          <h4>👥 KNN Algorithm</h4>
+          <p>For prediction, find the K nearest training samples and average (regression) or vote (classification). No explicit learning — stores all training data. Fast training, slow prediction. Good for small datasets (< 100k samples); curse of dimensionality in high dimensions.</p>
+        </div>
+        <div class="concept">
+          <h4>📏 Distance Metrics</h4>
+          <p><strong>Euclidean</strong> (L2): <code>sqrt(Σ(x_i - y_i)²)</code> — most common. <strong>Manhattan</strong> (L1): <code>Σ|x_i - y_i|</code> — robust to outliers. <strong>Cosine</strong>: angle between vectors — used in text and embedding search. Always scale features to make distances comparable.</p>
+        </div>
+        <div class="concept">
+          <h4>🔍 Curse of Dimensionality</h4>
+          <p>In high dimensions, all points are roughly equidistant — KNN breaks down. Use dimensionality reduction (PCA) or feature selection before KNN on high-D data. Rule of thumb: KNN works best when n_features < 20 and n_samples is moderate.</p>
+        </div>
+        <div class="concept">
+          <h4>⚙️ Hyperparameter K</h4>
+          <p>K=1 (nearest neighbour) = low bias, high variance. Large K = high bias, low variance. Test K from 3 to 30 on validation set. Odd K for classification (avoids ties). Larger K helps with imbalanced classes.</p>
+        </div>
+      </div>
+
+      <div class="takeaways">
+        <h3>KEY TAKEAWAYS</h3>
+        <ul>
+          <li><strong>Always scale</strong> inputs with StandardScaler — KNN is distance-based.</li>
+          <li><code>K=sqrt(n)</code> is a rough starting heuristic; tune via cross-validation.</li>
+          <li>Cosine distance is your friend in embedding/RAG contexts (Azure AI Search uses it).</li>
+          <li>KNN is slow for prediction on large test sets — use tree-based methods for scale.</li>
+          <li>KNN naturally handles multi-class and multi-output problems.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DAY 7 ═══ -->
+  <div class="day-section" id="day7">
+    <div class="day-header">
+      <span class="day-badge">SUN</span>
+      <h2>Mini Project: Multi-Algorithm Comparison</h2>
+      <span class="time">4 hours</span>
+    </div>
+
+    <div class="day-content">
+      <p><strong>Why this matters:</strong> Apply all 5 algorithms (decision trees, random forests, XGBoost, SVM, KNN) to the same dataset. Compare on train/test metrics, training time, prediction time, and interpretability. This solidifies your understanding of when to use each algorithm and builds your model selection intuition.</p>
+
+      <a href="javascript:void(0)" class="notebook-link" onclick="copyNotebookPath('Day7_Mini_Project.ipynb')">📓 Day7_Mini_Project.ipynb</a>
+
+      <div class="concepts">
+        <div class="concept">
+          <h4>📊 Project Structure</h4>
+          <p>Load a classification or regression dataset. Split into train/validation/test. For each algorithm, fit on train, tune on validation (via GridSearchCV), evaluate on test. Compute metrics, training time, prediction time, and feature importance.</p>
+        </div>
+        <div class="concept">
+          <h4>🏆 Algorithm Comparison Framework</h4>
+          <p>Speed: Trees >> SVM >> KNN on large data. Accuracy: Often XGBoost ≥ RF >> SVM > KNN > DT. Interpretability: DT >> RF >> SVM/KNN >> XGBoost. Scaling: Tree-based and KNN handle large datasets; SVM struggles. Choose based on data size, latency constraints, and interpretability needs.</p>
+        </div>
+        <div class="concept">
+          <h4>🔧 Hyperparameter Tuning Best Practices</h4>
+          <p>Use GridSearchCV for small parameter spaces (< 50 combinations). Use RandomizedSearchCV for large spaces. Always use stratified K-fold for classification (preserves class distribution). Set <code>n_jobs=-1</code> for parallel training.</p>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <h3>🎯 Deliverables</h3>
+        <p>Create a comparison table (algorithm, best params, train score, test score, time). Write a 200-word analysis: which algorithm performed best? Why? Which would you use in production and why? Consider data size, interpretability, and latency.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FLASHCARDS SECTION ═══ -->
+  <div class="flashcard-section" id="flashcards">
+    <div class="flashcard-header">
+      <h3>20 Self-Assessment Flashcards</h3>
+      <div class="flashcard-score">Score: <span id="score">0</span>/20</div>
+    </div>
+
+    <div class="flashcard-grid">
+      <div class="flashcard" data-id="1">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">01</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-tree">Decision Trees</span> What is Gini impurity and how is it used in tree growth?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">Gini impurity = 1 - Σp² where p is the proportion of each class in a node. Lower Gini = purer node (more homogeneous classes). Trees grow by splitting on the feature that minimises weighted child Gini, greedily at each step. This greedy approach finds locally optimal splits, not necessarily globally optimal.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="2">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">02</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-tree">Decision Trees</span> What do <code>max_depth</code>, <code>min_samples_split</code>, and <code>min_samples_leaf</code> control?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner"><code>max_depth</code> = height of the tree (shallow = high bias, deep = high variance). <code>min_samples_split</code> = minimum samples required to split a node (high = fewer splits, higher bias). <code>min_samples_leaf</code> = minimum samples in a leaf node (acts as pruning to prevent overfitting). Tune these three together to control bias-variance trade-off.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="3">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">03</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-ensemble">Random Forests</span> How does bootstrap aggregating (bagging) reduce overfitting?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">Bagging creates B bootstrap samples (sampling with replacement) and trains independent models on each. Predictions are averaged (regression) or voted (classification). If individual models are independent and high-variance, averaging reduces variance without increasing bias. Each bootstrap sample contains ~63% of original data; ~37% is held out (OOB), enabling free cross-validation.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="4">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">04</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-ensemble">Random Forests</span> Why does random feature selection in RF decorrelate trees?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">If all trees use the same strong feature, their predictions are correlated, and averaging doesn't reduce variance as much. By limiting each split to sqrt(n_features) random features, weak features get a chance to be used, and trees are forced to find different patterns. Decorrelated trees → averaging reduces variance more → lower overall error.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="5">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">05</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-ensemble">Random Forests</span> What is an Out-of-Bag (OOB) score and why is it useful?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">Each bootstrap sample excludes ~37% of data (OOB). Evaluate each tree on its OOB samples and average the scores. This gives you a validation score without needing a separate validation set. OOB score ≈ k-fold CV score with zero overhead. Use it to sanity-check generalization without splitting your data.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="6">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">06</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-xgb">XGBoost</span> Explain gradient boosting: how does it differ from bagging?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">Bagging trains independent trees in parallel, then averages. Boosting trains trees sequentially, where each new tree fits the <strong>residuals</strong> (errors) of the previous ensemble. New predictions = old predictions + (learning_rate × new tree). This sequential error-correction is why boosting often beats bagging, but without regularisation, boosting overfits faster.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="7">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">07</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-xgb">XGBoost</span> What role does <code>eta</code> (learning rate) play in XGBoost?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner"><code>eta</code> (default 0.3) controls how much each tree contributes to predictions. Low eta (0.01–0.05) = slower learning, more trees needed, but often better generalisation. High eta = faster learning, fewer trees, risk of overfitting. Always pair low eta with early stopping to find the optimal number of boosting rounds.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="8">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">08</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-xgb">XGBoost</span> How does XGBoost handle missing values natively?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">XGBoost learns which direction (left or right) is better for missing values at each split during training. Each split has a default direction for missing values. This is why you don't need explicit imputation — XGBoost infers missingness patterns automatically. It's one of XGBoost's key advantages over sklearn's GradientBoosting.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="9">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">09</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-svm">SVM</span> What is the maximum margin principle and why does it matter?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">SVM finds a hyperplane (decision boundary) that maximises the distance (margin) to the nearest points on either side. Wider margins generalise better to unseen data. Points closest to the margin are support vectors. This principle is motivated by statistical learning theory: wider margins → simpler model → better generalisation.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="10">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">10</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-svm">SVM</span> Explain soft margins and the role of parameter <code>C</code>.</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">Hard-margin SVM requires zero misclassification (often impossible). Soft-margin SVM allows some misclassification controlled by <code>C</code> (regularisation). High C = strict margins, penalise errors heavily (low bias, high variance). Low C = loose margins (high bias, low variance). Tune C via cross-validation.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="11">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">11</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-svm">SVM</span> When would you use RBF kernel vs linear kernel in SVM?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner"><strong>Linear kernel</strong>: when data is linearly separable or feature space is already high-dimensional. <strong>RBF kernel</strong>: when data is non-linear. RBF maps to infinite dimensions; good for most cases. Start with RBF and tune <code>gamma</code> (RBF kernel width). Polynomial for specific cases where polynomial boundaries make sense.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="12">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">12</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-svm">SVM</span> Why must you scale SVM inputs? What scaler should you use?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">SVM is distance-based (margin is geometric distance). Unscaled features = features with larger ranges dominate the margin. Use <code>StandardScaler</code> to scale to mean=0, std=1. Always fit scaler on train data, then apply to validation/test. SVM is sensitive to scaling — this is a common mistake and source of poor performance.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="13">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">13</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-knn">KNN</span> How does the curse of dimensionality affect KNN?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">In high dimensions, all points are roughly equidistant from each other (Euclidean distance becomes meaningless). KNN loses predictive power because "nearest" doesn't correspond to similar samples. Solution: reduce dimensionality with PCA or feature selection before applying KNN. KNN works best in < 20 dimensions.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="14">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">14</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-knn">KNN</span> How do you choose K? What are the trade-offs?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">K=1 = nearest neighbour (low bias, high variance, overfits). Large K = high bias, low variance (underfits). Heuristic: start with K=sqrt(n). For classification, use odd K (avoids ties). Tune K via cross-validation on validation set. Larger K helps with imbalanced classes.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="15">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">15</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-knn">Distance Metrics</span> Compare Euclidean, Manhattan, and cosine distance.</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner"><strong>Euclidean (L2)</strong>: sqrt(Σ(x-y)²) — most common, sensitive to outliers. <strong>Manhattan (L1)</strong>: Σ|x-y| — robust to outliers, computationally faster. <strong>Cosine</strong>: 1 - (x·y)/(|x||y|) — angle-based, used for embeddings and text. Use cosine for embeddings/RAG (Azure AI Search), Euclidean for general cases.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="16">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">16</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-general">General</span> When would you choose tree-based models vs SVM vs KNN?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner"><strong>Tree-based (RF, XGBoost)</strong>: fast, parallel, good with mixed data types. <strong>SVM</strong>: interpretable, best for small-medium datasets, needs scaling. <strong>KNN</strong>: simple, good for small data, non-parametric. In competitions: XGBoost wins. In production: trees for speed. In high-stakes applications: SVM for interpretability.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="17">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">17</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-general">Hyperparameter Tuning</span> What is GridSearchCV and when do you use RandomizedSearchCV instead?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner"><strong>GridSearchCV</strong>: exhaustive search over all combinations (best for small parameter spaces, < 50 combinations). <strong>RandomizedSearchCV</strong>: sample random combinations (best for large spaces). RandomizedSearchCV often finds good solutions faster and with less compute. Use stratified k-fold for classification to preserve class distribution.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="18">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">18</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-general">Model Evaluation</span> Explain train/validation/test split. Why not just train/test?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">Train: fit model. Validation: tune hyperparameters and select model. Test: final evaluation on held-out data. If you tune on test set, you overfit to it. Proper split: 60% train, 20% validation, 20% test. For hyperparameter tuning, use k-fold CV on train+val combined, then final evaluation on test.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="19">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">19</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-general">Feature Engineering</span> How do tree-based models and distance-based models handle features differently?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">Trees don't need scaling or one-hot encoding (handle categorical natively). Distance-based (SVM, KNN) are scale-sensitive — use StandardScaler. Trees are invariant to monotonic transformations (e.g., log). Distance methods depend on raw values. This is why feature engineering for trees is minimal; for SVM/KNN, it's critical.</div></div>
+      </div>
+
+      <div class="flashcard" data-id="20">
+        <div class="flashcard-q" onclick="toggleCard(this)">
+          <span class="flashcard-num">20</span>
+          <span class="flashcard-text"><span class="flashcard-tag tag-general">Model Selection</span> You have 3 candidate models with test scores 0.85, 0.86, 0.87. How do you choose?</span>
+          <span class="flashcard-toggle">▼</span>
+        </div>
+        <div class="flashcard-a"><div class="flashcard-a-inner">Don't just pick the highest score. Check: (1) training time and prediction latency, (2) interpretability needs, (3) statistical significance (confidence intervals), (4) robustness to data distribution shift. Often, the simplest/fastest model is best. If differences < 1%, choose for speed and interpretability, not raw accuracy.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>AI Engineer Lab — <strong>Week 5</strong> | <a href="https://praveent27.github.io">Praveen Kumar Thumati</a> | Last updated: April 2026</p>
+  </footer>
+
+</div>
+
+<script>
+function copyNotebookPath(filename) {
+  navigator.clipboard.writeText(filename).then(() => {
+    alert('Notebook filename copied to clipboard: ' + filename);
+  });
+}
+
+function toggleCard(element) {
+  const card = element.closest('.flashcard');
+  card.classList.toggle('open');
+  updateScore();
+}
+
+function updateScore() {
+  const openCards = document.querySelectorAll('.flashcard.open').length;
+  document.getElementById('score').textContent = openCards;
+}
+</script>
+
+</body>
+</html>
